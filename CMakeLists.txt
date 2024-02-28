@@ -57,6 +57,7 @@ include(cmake/CompilerWarnings.cmake)
 
 #! Project main executable source compilation
 add_executable(${PROJECT_NAME} held-carp.cpp timer.h)
+add_executable(TSP_GA timer.h TSP_GA.cpp)
 
 #! Put path to your project headers
 #target_include_directories(${PROJECT_NAME} PRIVATE options_parser)
