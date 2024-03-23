@@ -1,5 +1,5 @@
+#include <utility>
 #include <vector>
-#include <unordered_map>
 #include <iostream>
 
 #include <string>
@@ -7,9 +7,15 @@
 #include <fstream>
 #include <algorithm>
 
+#include <thread>
+
+#include "oneapi/tbb/concurrent_unordered_map.h"
+
+#include "TreadSafeQ.h"
 #include "timer.h"
 
-// function to hash a pair of 2 integers (this function is used in boost)
+
+// function to hash a pair of 2 integers (this function is used in Boost)
 struct PairHash {
     template <class T1, class T2>
     std::size_t operator () (const std::pair<T1, T2>& p) const {
@@ -19,7 +25,10 @@ struct PairHash {
     }
 };
 
+typedef oneapi::tbb::concurrent_unordered_map<std::pair<int, int>, std::pair<int, int>, PairHash> distances_table_t;
+
 typedef std::vector<std::vector<int>> CITIES_MAP;
+
 
 
 std::vector<std::vector<int>> readCSVFile(const std::string& filename) {
@@ -65,27 +74,25 @@ int binary_without_vertex(int vertex, int binary) {
     return binary & ~(1 << vertex);
 }
 
-std::pair<std::vector<int>, int> held_carp(const CITIES_MAP& cities_map) {
-    auto cities_count = (int)cities_map.size();
+void consumer(
+        ThreadSafeQ<std::vector<bool>>& tsq,
+        std::atomic<size_t>& ready,
+        distances_table_t& distances,
+        const CITIES_MAP& cities_map,
+        const int combinations_per_thread
+) {
+    std::vector<int> combination;
 
-    std::unordered_map<std::pair<int, int>, std::pair<int, int>, PairHash> distances;
-    std::vector<int> vertexes_without_first(cities_count - 1);
+    while (true) {
+        auto v = tsq.pop();
 
-    for (int i = 1; i < cities_count; ++i) {
-        distances[{1 << i, i}] = {distance(0, i, cities_map), 0};
-        vertexes_without_first[i - 1] = i;
-    }
+//        poisson pill
+        if (v.empty()) break;
 
-    for (int size = 2; size < cities_count; ++size) {
-        std::vector<bool> v(cities_count - 1);
-        std::fill(v.begin(), v.begin() + size, true);
-
-        std::vector<int> combination;
-
-        do {
+        for (int k = 0; k < combinations_per_thread; ++k) {
             combination.clear();
 
-            for (int i = 0; i < cities_count - 1; ++i) {
+            for (size_t i = 0; i < cities_map.size() - 1; ++i) {
                 if (v[i]) {
                     combination.emplace_back(i + 1);
                 }
@@ -99,12 +106,12 @@ std::pair<std::vector<int>, int> held_carp(const CITIES_MAP& cities_map) {
                 for (auto i : combination) {
                     if (i == vertex) continue;
 
-//                    get combination without vertex element
-//                    we just set 0 in vertex-th place
+//                   get combination without vertex element
+//                   we just set 0 in vertex-th place
                     auto prev = binary_without_vertex(vertex, bits);
 
                     auto distance_through_i = distances[{prev, i}].first;
-                    distance_through_i += distance(i, vertex, cities_map);
+                    distance_through_i += cities_map[i][vertex];
 
                     if (local_shortest.first > distance_through_i) {
                         local_shortest = {distance_through_i, i};
@@ -113,16 +120,86 @@ std::pair<std::vector<int>, int> held_carp(const CITIES_MAP& cities_map) {
 
                 distances[{bits, vertex}] = local_shortest;
             }
+
+            if (!std::prev_permutation(v.begin(), v.end())) break;
+        }
+
+        ++ready;
+    }
+}
+
+std::pair<std::vector<int>, int> held_carp(
+        const CITIES_MAP& cities_map,
+        int threads_number = 1,
+        int combinations_per_thread = 100
+) {
+    distances_table_t distances;
+
+    auto cities_count = (int)cities_map.size();
+    std::vector<int> vertexes_without_first(cities_count - 1);
+
+    for (int i = 1; i < cities_count; ++i) {
+        distances[{1 << i, i}] = {distance(0, i, cities_map), 0};
+        vertexes_without_first[i - 1] = i;
+    }
+
+    ThreadSafeQ<std::vector<bool>> tsq;
+    std::atomic<size_t> ready = 0;
+
+    std::vector<std::thread> threads;
+    threads.reserve(threads_number);
+
+    for (int i = 0; i < threads_number; ++i) {
+        threads.emplace_back(
+            consumer,
+            std::ref(tsq),
+            std::ref(ready),
+            std::ref(distances),
+            std::ref(cities_map),
+            combinations_per_thread
+        );
+    }
+
+    for (int size = 2; size < cities_count; ++size) {
+        std::vector<bool> v(cities_count - 1);
+        std::fill(v.begin(), v.begin() + size, true);
+
+        std::vector<int> combination;
+
+        size_t count = 0;
+        ready = 0;
+        int combinations = 0;
+
+        do {
+            if (combinations == 0) {
+                tsq.push(v);
+                ++count;
+            }
+
+            ++combinations;
+
+            if (combinations >= combinations_per_thread) {
+                combinations = 0;
+            }
         } while (std::prev_permutation(v.begin(), v.end()));
+
+        while (ready != count) {}
+    }
+
+    for (int i = 0; i < threads_number; ++i) {
+        tsq.push({});
+    }
+
+    for (auto& thread : threads) {
+        thread.join();
     }
 
     auto full_cities_bits = vertexes_to_bits(vertexes_without_first);
-
     int shortest_distance = INT32_MAX, parent = 0;
 
-    // find the shortest way
     for (auto vertex : vertexes_without_first) {
         auto distance_through_vertex = distances[{full_cities_bits, vertex}].first;
+
         distance_through_vertex += distance(vertex, 0, cities_map);
 
         if (shortest_distance > distance_through_vertex) {
@@ -130,20 +207,16 @@ std::pair<std::vector<int>, int> held_carp(const CITIES_MAP& cities_map) {
             parent = vertex;
         }
     }
-    // if you want just the shortest distance, change return type to int and
-    // uncomment this code
-//     return shortest_distance;
 
-
-//    reconstruct the shortest way
     std::vector<int> path;
     path.reserve(cities_count + 1);
 
-    for (auto _ : vertexes_without_first) {
+    for (size_t i = 0; i < vertexes_without_first.size(); ++i) {
         path.emplace_back(parent);
 
         auto binary_path_new = binary_without_vertex(parent, full_cities_bits);
         parent = distances[{full_cities_bits, parent}].second;
+
         full_cities_bits = binary_path_new;
     }
 
@@ -159,9 +232,12 @@ int main() {
     auto filename = "../data/graph.csv";
     auto cities_map = readCSVFile(filename);
 
+    int threads_number = 4;
+    int combinations_per_thread = 300;
+
     auto start_time = get_current_time_fenced();
 
-    auto [path, distance] = held_carp(cities_map);
+    auto [path, distance] = held_carp(cities_map, threads_number, combinations_per_thread);
 
     auto finish_time = get_current_time_fenced();
     auto time = finish_time - start_time;

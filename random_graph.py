@@ -1,20 +1,25 @@
 """ generate random matrix """
 import random
 
-result = []
-number = 21
+number = 20
 
-for _ in range(number):
-    result.append(["0"] * number)
+def random_matrix(number):
+    result = []
 
-for i in range(number):
-    for j in range(number):
-        if i == j:
-            continue
+    for _ in range(number):
+        result.append(["0"] * number)
 
-        result[i][j] = str(random.randint(1, number))
-        result[j][i] = result[i][j]
+    for i in range(number):
+        for j in range(number):
+            if i == j:
+                continue
 
-print('writing')
-with open('graph.csv', 'w', encoding='utf-8') as file:
-    file.write("\n".join(",".join(row) for row in result))
+            result[i][j] = str(random.randint(1, number))
+            result[j][i] = result[i][j]
+
+    print('writing')
+    with open('./data/graph.csv', 'w', encoding='utf-8') as file:
+        file.write("\n".join(",".join(row) for row in result))
+
+
+random_matrix(number)

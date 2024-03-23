@@ -27,21 +27,19 @@ option(ENABLE_PVS_STUDIO "PVS Studio code analyser" OFF)
 #  Only one of Memory (MSAN), Address (ASAN), or Thread (TSan)
 #  sanitizers is applicable at the time -- the first defined.
 
-#! UndefinedBehaviorSanitizer (UBSan)
+#! UndefinedBehaviorSanitizer (UBSan).
 #  Info: https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
-option(ENABLE_UBSan "UndefinedBehaviorSanitizer" OFF)
-
+set(ENABLE_UBSan OFF)
 #! AddressSanitizer -- detects use after free or after scope exit,
 #  memory overflows and leaks.
 #  Info: https://github.com/google/sanitizers/wiki/AddressSanitizer
-option(ENABLE_ASAN "AddressSanitizer" OFF)
-
+set(ENABLE_ASAN OFF)
 #! ThreadSanitizer -- detects data races.
-option(ENABLE_TSan "ThreadSanitizer" OFF)
-
-#! MemorySanitizer detects uninitialized memory reads
+#  Info: https://clang.llvm.org/docs/ThreadSanitizer.html
+set(ENABLE_TSan OFF)
+#! MemorySanitizer -- detects uninitialized memory reads
 #  Info: https://github.com/google/sanitizers/wiki/MemorySanitizer
-option(ENABLE_MSAN "ThreadSanitizer" OFF)
+set(ENABLE_MSAN OFF)
 
 
 #! Be default -- build release version if not specified otherwise.
@@ -56,11 +54,16 @@ include(cmake/CompilerWarnings.cmake)
 ##########################################################
 
 #! Project main executable source compilation
-add_executable(${PROJECT_NAME} held-carp.cpp timer.h)
-add_executable(TSP_GA timer.h TSP_GA.cpp)
+add_executable(held-carp held-carp.cpp timer.h)
+add_executable(held-carp_parallel held-carp_parallel.cpp timer.h TreadSafeQ.h)
+add_executable(TSP_GA timer.h TSP_GA.cpp TreadSafeQ.h)
 
 #! Put path to your project headers
 #target_include_directories(${PROJECT_NAME} PRIVATE options_parser)
+
+
+find_package(TBB REQUIRED)
+target_link_libraries(held-carp_parallel PRIVATE TBB::tbb)
 
 #! Add external packages
 # options_parser requires boost::program_options library
@@ -74,11 +77,11 @@ add_executable(TSP_GA timer.h TSP_GA.cpp)
 ##########################################################
 
 INSTALL(PROGRAMS
-        $<TARGET_FILE:${PROJECT_NAME}>	# ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
+        $<TARGET_FILE:held-carp>	# ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
         DESTINATION bin)
 
 # Define ALL_TARGETS variable to use in PVS and Sanitizers
-set(ALL_TARGETS ${PROJECT_NAME})
+set(ALL_TARGETS held-carp TSP_GA held-carp_parallel)
 
 # Include CMake setup
 include(cmake/main-config.cmake)

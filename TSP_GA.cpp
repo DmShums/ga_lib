@@ -84,7 +84,7 @@ std::vector<int> generateRandomPermutation() {
 
 int calculateTotalDistance(const std::vector<int>& permutation) {
     int total_distance = 0;
-    for (int i = 0; i < NUM_CITIES - 2; ++i) {
+    for (int i = 0; i < NUM_CITIES - 1; ++i) {
         total_distance += distance_matrix[permutation[i]][permutation[i + 1]];
     }
     total_distance += distance_matrix[permutation[NUM_CITIES - 1]][permutation[0]];
@@ -163,21 +163,26 @@ std::vector<Individual> geneticAlgorithm() {
 }
 
 int main() {
-    auto filename = "../data/graph.csv";
+    auto filename = "./data/graph.csv";
     distance_matrix = readCSVFile(filename);
     NUM_CITIES = distance_matrix.size();
-    std::cout << NUM_CITIES << std::endl;
+//    std::cout << NUM_CITIES << std::endl;
 
     std::srand(time(NULL));
+    auto start_time = get_current_time_fenced();
+
     std::vector<Individual> final_population = geneticAlgorithm();
     Individual best_individual = *std::min_element(final_population.begin(), final_population.end(), [](const Individual& a, const Individual& b) {
         return a.fitness < b.fitness;
     });
-    std::cout << "Best permutation: ";
-    for (int i = 0; i < NUM_CITIES; ++i) {
-        std::cout << best_individual.permutation[i] << " ";
-    }
-    std::cout << std::endl;
-    std::cout << "Total distance: " << best_individual.fitness << std::endl;
+    auto finish_time = get_current_time_fenced();
+    auto time = finish_time - start_time;
+//    std::cout << "Best permutation: ";
+//    for (int i = 0; i < NUM_CITIES; ++i) {
+//        std::cout << best_individual.permutation[i] + 1 << " ";
+//    }
+//    std::cout << std::endl;
+    std::cout << best_individual.fitness << std::endl;
+    std::cout << to_us(time);
     return 0;
 }
