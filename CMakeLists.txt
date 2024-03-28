@@ -55,15 +55,24 @@ include(cmake/CompilerWarnings.cmake)
 
 #! Project main executable source compilation
 add_executable(held-carp held-carp.cpp timer.h)
-add_executable(held-carp_parallel held-carp_parallel.cpp timer.h TreadSafeQ.h)
+###### uncomment ######
+
+#add_executable(held-carp_parallel held-carp_parallel.cpp timer.h TreadSafeQ.h)
+
+###### uncomment ######
 add_executable(TSP_GA timer.h TSP_GA.cpp TreadSafeQ.h)
+#add_executable(TSP_GA_parallel timer.h TreadSafeQ.h TPool.h TSP_GA_parallel.cpp)
+add_executable(TSP_GA_parallel timer.h TreadSafeQ.h TPool.h TPool.cpp TSP_GA_parallel.cpp)
 
 #! Put path to your project headers
 #target_include_directories(${PROJECT_NAME} PRIVATE options_parser)
 
+###### uncomment ######
 
-find_package(TBB REQUIRED)
-target_link_libraries(held-carp_parallel PRIVATE TBB::tbb)
+#find_package(TBB REQUIRED)
+#target_link_libraries(held-carp_parallel PRIVATE TBB::tbb)
+
+###### uncomment ######
 
 #! Add external packages
 # options_parser requires boost::program_options library
@@ -76,12 +85,21 @@ target_link_libraries(held-carp_parallel PRIVATE TBB::tbb)
 # Fixed CMakeLists.txt part
 ##########################################################
 
-INSTALL(PROGRAMS
-        $<TARGET_FILE:held-carp>	# ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
-        DESTINATION bin)
+###### uncomment ######
+
+#INSTALL(PROGRAMS
+#        $<TARGET_FILE:held-carp>	# ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
+#        DESTINATION bin)
+
+###### uncomment ######
 
 # Define ALL_TARGETS variable to use in PVS and Sanitizers
-set(ALL_TARGETS held-carp TSP_GA held-carp_parallel)
+
+###### uncomment ######
+
+#set(ALL_TARGETS held-carp TSP_GA held-carp_parallel)
+
+###### uncomment ######
 
 # Include CMake setup
 include(cmake/main-config.cmake)

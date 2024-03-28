@@ -1,7 +1,3 @@
-//
-// Created by Victor Muryn on 19.03.2024.
-//
-
 #ifndef GA_LIB_TREADSAFEQ_H
 #define GA_LIB_TREADSAFEQ_H
 
@@ -23,7 +19,7 @@ public:
     void push(T value) {
         {
             std::lock_guard<std::mutex> lg{mx};
-            deque.emplace_back(value);
+            deque.emplace_back(std::move(value));
         }
 
         cv.notify_one();
@@ -36,6 +32,16 @@ public:
         deque.pop_front();
 
         return item;
+    }
+
+    bool try_pop(T& dst) {
+        std::unique_lock<std::mutex> lock{mx};
+        if (!deque.empty()){
+            dst = std::move(deque.front());
+            deque.pop_front();
+            return true;
+        }
+        return false;
     }
 };
 
