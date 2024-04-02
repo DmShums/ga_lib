@@ -54,23 +54,23 @@ include(cmake/CompilerWarnings.cmake)
 ##########################################################
 
 #! Project main executable source compilation
-add_executable(held-carp held-carp.cpp timer.h)
+#add_executable(held-carp held-carp.cpp timer.h)
 ###### uncomment ######
 
-#add_executable(held-carp_parallel held-carp_parallel.cpp timer.h TreadSafeQ.h)
+add_executable(held-carp_parallel held-carp_parallel.cpp timer.h TreadSafeQ.h)
 
 ###### uncomment ######
 add_executable(TSP_GA timer.h TSP_GA.cpp TreadSafeQ.h)
-#add_executable(TSP_GA_parallel timer.h TreadSafeQ.h TPool.h TSP_GA_parallel.cpp)
 add_executable(TSP_GA_parallel timer.h TreadSafeQ.h TPool.h TPool.cpp TSP_GA_parallel.cpp)
+add_executable(GA test_lib.cpp GeneticAlgorithm.cpp GeneticAlgorithm.hpp TPool.h TPool.cpp timer.h)
 
 #! Put path to your project headers
 #target_include_directories(${PROJECT_NAME} PRIVATE options_parser)
 
 ###### uncomment ######
 
-#find_package(TBB REQUIRED)
-#target_link_libraries(held-carp_parallel PRIVATE TBB::tbb)
+find_package(TBB REQUIRED)
+target_link_libraries(held-carp_parallel PRIVATE TBB::tbb)
 
 ###### uncomment ######
 
@@ -97,7 +97,7 @@ add_executable(TSP_GA_parallel timer.h TreadSafeQ.h TPool.h TPool.cpp TSP_GA_par
 
 ###### uncomment ######
 
-#set(ALL_TARGETS held-carp TSP_GA held-carp_parallel)
+set(ALL_TARGETS GA)
 
 ###### uncomment ######
 
