@@ -57,15 +57,40 @@ include(cmake/CompilerWarnings.cmake)
 #add_executable(held-carp held-carp.cpp timer.h)
 ###### uncomment ######
 
-add_executable(held-carp_parallel held-carp_parallel.cpp timer.h TreadSafeQ.h)
+add_executable(held-carp_parallel
+        src/held-carp_parallel.cpp
+        include/timer.h
+        include/TreadSafeQ.h)
+add_executable(TSP_GA
+        include/timer.h
+        src/TSP_GA.cpp
+        include/TreadSafeQ.h)
+add_executable(TSP_GA_parallel
+        include/timer.h
+        include/TreadSafeQ.h
+        include/TPool.h
+        src/TPool.cpp
+        src/TSP_GA_parallel.cpp)
+add_executable(GA
+        src/GeneticAlgorithm.cpp
+        include/GeneticAlgorithm.hpp
+        include/TPool.h
+        src/TPool.cpp
+        include/timer.h)
 
-###### uncomment ######
-add_executable(TSP_GA timer.h TSP_GA.cpp TreadSafeQ.h)
-add_executable(TSP_GA_parallel timer.h TreadSafeQ.h TPool.h TPool.cpp TSP_GA_parallel.cpp)
-add_executable(GA test_lib.cpp GeneticAlgorithm.cpp GeneticAlgorithm.hpp TPool.h TPool.cpp timer.h)
+add_executable(structured_ga
+        include/genSolver.h
+        src/genSolver.cpp
+
+        include/TPool.h
+        src/TPool.cpp
+)
 
 #! Put path to your project headers
-#target_include_directories(${PROJECT_NAME} PRIVATE options_parser)
+target_include_directories(held-carp_parallel PRIVATE include)
+target_include_directories(TSP_GA PRIVATE include)
+target_include_directories(TSP_GA_parallel PRIVATE include)
+target_include_directories(GA PRIVATE include)
 
 ###### uncomment ######
 

@@ -18,7 +18,7 @@ def random_matrix(number):
             result[j][i] = result[i][j]
 
     print('writing')
-    with open('./data/graph.csv', 'w', encoding='utf-8') as file:
+    with open('../data/graph.csv', 'w', encoding='utf-8') as file:
         file.write("\n".join(",".join(row) for row in result))
 
 

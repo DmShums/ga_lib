@@ -31,7 +31,7 @@ if __name__ == "__main__":
     # graph = [[0, 10, 15, 20], [10, 0, 35, 25], 
     #         [15, 35, 0, 30], [20, 25, 30, 0]] 
     
-    with open('data/graph.csv', 'r', encoding="utf-8") as file:
+    with open('../data/graph.csv', 'r', encoding="utf-8") as file:
         graph = [[int(j) for j in i.strip().split(',')] for i in file.readlines()]
     # print(graph)
     s = 0
