@@ -2,7 +2,7 @@
 
 Individual Population::getBest() const{
     Individual best = population[0];
-    for (Individual ind : population){
+    for (const Individual& ind : population){
         if (ind < best){
             best = ind;
         }
