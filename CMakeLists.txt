@@ -79,9 +79,19 @@ add_executable(GA
         include/timer.h)
 
 add_executable(structured_ga
-        include/genSolver.h
-        src/genSolver.cpp
+        src/main.cpp
 
+        include/Population.h
+        src/Population.cpp
+
+        src/SalesmanPopulation.cpp
+        include/SalesmanPopulation.h
+
+        include/Solver.h
+        src/Solver.cpp
+
+        include/timer.h
+        include/TreadSafeQ.h
         include/TPool.h
         src/TPool.cpp
 )
@@ -91,6 +101,7 @@ target_include_directories(held-carp_parallel PRIVATE include)
 target_include_directories(TSP_GA PRIVATE include)
 target_include_directories(TSP_GA_parallel PRIVATE include)
 target_include_directories(GA PRIVATE include)
+target_include_directories(structured_ga PRIVATE include)
 
 ###### uncomment ######
 
