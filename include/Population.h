@@ -7,6 +7,7 @@
 #include <functional>
 #include <algorithm>
 #include <iostream>
+#include <random>
 
 class Individual {
 /*
@@ -37,6 +38,10 @@ public:
     Individual getBest() const;
 
     selection_t simpleSelection;
+    selection_t rankSelection;
+    selection_t boltzmannSelection;
+    selection_t proportionalSelection;
+
     crossover_t simpleCrossover;
     mutation_t simpleMutation;
 

@@ -1,4 +1,4 @@
-#include "population.h"
+#include "Population.h"
 
 Individual Population::getBest() const{
     return *min_element(population.begin(), population.end());
@@ -32,9 +32,87 @@ Individual Population::simpleSelection() {
     }
 
     return best_individual;
-};
+}
 
+Individual Population::rankSelection() {
+    std::vector<Individual> sortedPopulation = population;
+    std::sort(sortedPopulation.begin(), sortedPopulation.end(),
+              [](const Individual& a, const Individual& b) {
+                  return a.fitness < b.fitness;
+              });
 
+    int populationSize = population.size();
+    std::vector<double> probabilities(populationSize);
+    for (int i = 0; i < populationSize; ++i) {
+        // Higher probability to individuals with higher rank
+        probabilities[i] = (2.0 * (populationSize - i)) / (populationSize * (populationSize + 1));
+    }
+
+    // Selection using roulette wheel selection
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::discrete_distribution<> dist(probabilities.begin(), probabilities.end());
+    int selectedIndex = dist(gen);
+
+    return sortedPopulation[selectedIndex];
+}
+
+double calculateTemperature(int generation) {
+    double initial_temperature = 100.0;
+    double cooling_factor = 0.9;
+
+    return initial_temperature * std::pow(cooling_factor, generation);
+}
+
+Individual Population::boltzmannSelection() {
+    // Sum of Boltzmann factors
+    auto temperature = calculateTemperature(1);
+    double sum = 0.0;
+    for (const Individual& individual : population) {
+        sum += std::exp(individual.fitness / temperature);
+    }
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<double> dis(0.0, sum);
+    double randNum = dis(gen);
+
+    // Find the selected individual based on Boltzmann probabilities
+    double partialSum = 0.0;
+    for (const Individual& individual : population) {
+        partialSum += std::exp(individual.fitness / temperature);
+        if (partialSum >= randNum) {
+            return individual;
+        }
+    }
+
+    return population.back();
+}
+
+Individual Population::proportionalSelection() {
+        int totalFitness = 0;
+        for (const Individual& ind : population) {
+            totalFitness += ind.fitness;
+        }
+
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dis(0, totalFitness);
+
+        int randValue = dis(gen);
+        int accumulatedFitness = 0;
+        for (const Individual& ind : population) {
+            accumulatedFitness += ind.fitness;
+            if (accumulatedFitness >= randValue) {
+                return ind;
+            }
+        }
+
+        // This line should never be reached but added for compiler safety
+        return population.back();
+    }
+
+// default crossovers
 Individual Population::simpleCrossover(const Individual &parent1, const Individual &parent2) {
     Individual offspring;
     size_t solutionLen = parent1.solution.size();
@@ -60,6 +138,7 @@ Individual Population::simpleCrossover(const Individual &parent1, const Individu
     return offspring;
 }
 
+// default mutations
 Individual Population::simpleMutation(const Individual& parent) {
     Individual offspring(parent);
     double mutationRate = 0.05;
