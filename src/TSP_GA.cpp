@@ -163,7 +163,7 @@ std::vector<Individual> geneticAlgorithm() {
 }
 
 int main() {
-    auto filename = "./data/graph.csv";
+    auto filename = "../data/graph.csv";
     distance_matrix = readCSVFile(filename);
     NUM_CITIES = distance_matrix.size();
 //    std::cout << NUM_CITIES << std::endl;

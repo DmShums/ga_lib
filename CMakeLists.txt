@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.15)
 set(PROJECT_NAME ga_lib)
 project(${PROJECT_NAME} C CXX) # project(${PROJECT_NAME} C CXX ASM)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 ##########################################################
 # User configurable options of the template
@@ -29,7 +29,7 @@ option(ENABLE_PVS_STUDIO "PVS Studio code analyser" OFF)
 
 #! UndefinedBehaviorSanitizer (UBSan).
 #  Info: https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
-set(ENABLE_UBSan OFF)
+set(ENABLE_UBSan ON)
 #! AddressSanitizer -- detects use after free or after scope exit,
 #  memory overflows and leaks.
 #  Info: https://github.com/google/sanitizers/wiki/AddressSanitizer
@@ -61,16 +61,19 @@ add_executable(held-carp_parallel
         src/held-carp_parallel.cpp
         include/timer.h
         include/TreadSafeQ.h)
+
 add_executable(TSP_GA
         include/timer.h
         src/TSP_GA.cpp
         include/TreadSafeQ.h)
+
 add_executable(TSP_GA_parallel
         include/timer.h
         include/TreadSafeQ.h
         include/TPool.h
         src/TPool.cpp
         src/TSP_GA_parallel.cpp)
+
 add_executable(GA
         src/GeneticAlgorithm.cpp
         include/GeneticAlgorithm.hpp

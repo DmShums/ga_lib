@@ -119,12 +119,6 @@ void GeneticAlgorithm<T>::evolve() {
 
         for (int i = 0; i < population_size; ++i) {
             fut_population.emplace_back( std::move(pool.submit(task)) );
-//            auto parent1 = select();
-//            auto parent2 = select();
-//            auto offspring = crossover(parent1, parent2);
-//
-//            mutate(offspring);
-//            new_population.emplace_back(offspring);
         }
 
         for (auto &f : fut_population) {

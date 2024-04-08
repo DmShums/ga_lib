@@ -7,15 +7,19 @@
 
 struct SetUp{
     size_t generationsNum;
-    size_t crossoverPairsNum;
-    size_t mutationNum;
+    double crossoverRate;
+    double mutationRate;
 };
 
 class Solver{
 public:
     size_t genNum;
-    size_t crossoverPairsNum;
-    size_t mutationNum;
+
+    double crossoverRate;
+    double mutationRate;
+
+    size_t crossoverPairsNum{};
+    size_t mutationNum{};
 
     explicit Solver(SetUp setUp);
 

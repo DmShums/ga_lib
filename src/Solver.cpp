@@ -1,66 +1,77 @@
 #include "Solver.h"
 
-Solver::Solver (SetUp setUp){
+#define DEBUG false
+
+Solver::Solver (SetUp setUp) {
     genNum = setUp.generationsNum;
-    crossoverPairsNum = setUp.crossoverPairsNum;
-    mutationNum = setUp.mutationNum;
+    crossoverRate = setUp.crossoverRate;
+    mutationRate = setUp.mutationRate;
 }
 
 Individual Solver::solve(Population &population) {
     thread_pool pool(std::thread::hardware_concurrency());
-//    thread_pool pool(2);
+    size_t noChangeIndividualsNum = population.population.size() * (1 - mutationRate - crossoverRate);
+
+    if (mutationRate + crossoverRate > 1) {
+        std::cerr << "Wrong inputs. mutationRate - crossoverRate must be <= 1" << std::endl;
+        return Individual{};
+    }
+
+    mutationNum = population.population.size() * mutationRate;
+    crossoverPairsNum = population.population.size() * crossoverRate;
+
+    std::function<Individual()> crossoverTask = [&population]() {
+        Individual parent1 = population.selection();
+        Individual parent2 = population.selection();
+        Individual offspring = population.crossover(parent1, parent2);
+        return offspring;
+    };
+
+    std::function<Individual()> mutationTask = [&population](){
+        Individual parent = population.selection();
+        Individual offspring = population.mutation(parent);
+        return offspring;
+    };
+
+    std::function<Individual()> selectionTask = [&population](){
+        return population.selection();
+    };
 
     for (size_t generation = 0; generation < genNum; ++generation) {
         std::vector<std::future<Individual>> fut_population;
 
         // crossover tasks
         for (size_t i = 0; i < crossoverPairsNum; ++i) {
-            std::function<Individual()> task = [&population]() {
-                Individual parent1 = population.selection();
-                Individual parent2 = population.selection();
-                Individual offspring = population.crossover(parent1, parent2);
-                return offspring;
-            };
-
-            std::future<Individual> future = pool.submit(task);
-            fut_population.push_back(std::move(future));
+            std::future<Individual> future = pool.submit(crossoverTask);
+            fut_population.emplace_back(std::move(future));
         }
 
         // mutation tasks
         for (size_t i = 0; i < mutationNum; ++i) {
-            std::function<Individual()> task = [&population](){
-                Individual parent = population.selection();
-                Individual offspring = population.mutation(parent);
-                return offspring;
-            };
-
-            std::future<Individual> future = pool.submit(task);
-            fut_population.push_back(std::move(future));
+            std::future<Individual> future = pool.submit(mutationTask);
+            fut_population.emplace_back(std::move(future));
         }
 
         // simple passing task
-        size_t noChangeIndividualsNum = population.population.size() - mutationNum - crossoverPairsNum;
         for (size_t i = 0; i < noChangeIndividualsNum; ++i){
-            std::function<Individual()> task = [&population](){
-                return population.selection();
-            };
-
-            std::future<Individual> future = pool.submit(task);
-            fut_population.push_back(std::move(future));
+            std::future<Individual> future = pool.submit(selectionTask);
+            fut_population.emplace_back(std::move(future));
         }
 
         std::vector<Individual> new_population;
         for (auto &f: fut_population) {
-            new_population.push_back(f.get());
+            new_population.emplace_back(f.get());
         }
+
         population.population = new_population;
 
+#if DEBUG
         std::cout << "Generation " << generation << std::endl;
-
-        for(Individual ind : new_population){
+        for (Individual ind : new_population){
             std::cout << ind.fitness << " ";
         }
         std::cout << std::endl;
+#endif
     }
 
     return population.getBest();

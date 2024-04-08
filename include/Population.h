@@ -1,12 +1,12 @@
+#ifndef GA_LIB_POPULATION_H
+#define GA_LIB_POPULATION_H
+
 #include <queue>
 #include <vector>
 #include <string>
 #include <functional>
 #include <algorithm>
 #include <iostream>
-
-#ifndef GA_LIB_POPULATION_H
-#define GA_LIB_POPULATION_H
 
 class Individual {
 /*
@@ -20,35 +20,59 @@ public:
     }
 };
 
+
 class Population {
 /*
  * Abstract population class. Should be inherited by all the other classes
  */
 protected:
-    std::string selectionType;
-    std::string crossoverType;
-    std::string mutationType;
+    typedef Individual selection_t();
+    typedef Individual crossover_t(const Individual &parent1, const Individual &parent2);
+    typedef Individual mutation_t(const Individual &parent);
 
-    std::vector<std::string> selectionList;
-    std::vector<std::string> crossoverList;
-    std::vector<std::string> mutationList;
 public:
     std::vector<Individual> population;
 
     virtual void evaluate(Individual&) const = 0;
     Individual getBest() const;
 
-    virtual Individual selection() = 0;                     // function to use while selection
-    std::vector<std::string> getSelectionTypes() const;     // function to get list of provided selections
-    void setSelectionType(const std::string &type);         // function to set selection type
+    selection_t simpleSelection;
+    crossover_t simpleCrossover;
+    mutation_t simpleMutation;
 
-    virtual Individual crossover(const Individual& parent1, const Individual& parent2) = 0;
-    std::vector<std::string> getCrossoverTypes() const;
-    void setCrossoverType(const std::string &type);
+    enum class selections { simple };
+    enum class crossovers { simple };
+    enum class mutations { simple };
 
-    virtual Individual mutation(const Individual& parent) = 0;
-    std::vector<std::string> getMutationTypes() const;
-    void setMutationTypes(const std::string &type);
+    selections selectionType = selections::simple;
+    crossovers crossoverType = crossovers::simple;
+    mutations mutationType = mutations::simple;
+
+    virtual Individual selection() {
+        switch (selectionType) {
+            case selections::simple:
+                return simpleSelection();
+        }
+    };
+
+    void setSelection(selections selectionType);
+
+    virtual Individual crossover(const Individual &parent1, const Individual &parent2) {
+        switch (crossoverType) {
+            case crossovers::simple:
+                return simpleCrossover(parent1, parent2);
+        }
+    }
+    void setCrossover(crossovers crossoverType);
+
+    virtual Individual mutation(const Individual &parent) {
+        switch (mutationType) {
+            case mutations::simple:
+                return simpleMutation(parent);
+        }
+    };
+
+    void setMutation(mutations mutateType);
 };
 
 #endif //GA_LIB_POPULATION_H

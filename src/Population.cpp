@@ -1,43 +1,77 @@
 #include "population.h"
 
 Individual Population::getBest() const{
-    Individual best = population[0];
-    for (const Individual& ind : population){
-        if (ind < best){
-            best = ind;
+    return *min_element(population.begin(), population.end());
+}
+
+// Setters
+void Population::setSelection(Population::selections selectionType) {
+    this->selectionType = selectionType;
+}
+
+void Population::setCrossover(Population::crossovers crossoverType) {
+    this->crossoverType = crossoverType;
+}
+
+void Population::setMutation(Population::mutations mutationType) {
+    this->mutationType = mutationType;
+}
+
+// default selections
+Individual Population::simpleSelection() {
+    int tournament_size = 5;
+
+    Individual best_individual = population[std::rand() % population.size()];
+
+    for (int i = 1; i < tournament_size; ++i) {
+        Individual contender = population[std::rand() % population.size()];
+
+        if (contender.fitness < best_individual.fitness) {
+            best_individual = contender;
         }
     }
-    return best;
+
+    return best_individual;
+};
+
+
+Individual Population::simpleCrossover(const Individual &parent1, const Individual &parent2) {
+    Individual offspring;
+    size_t solutionLen = parent1.solution.size();
+    int start = std::rand() % solutionLen;
+    int end = std::rand() % solutionLen;
+    if (start > end) {
+        std::swap(start, end);
+    }
+    std::vector<int> segment(parent1.solution.begin() + start, parent1.solution.begin() + end);
+
+    for (int i = 0, j = 0; i < solutionLen; ++i) {
+        if (i >= start && i < end) {
+            offspring.solution.push_back(parent1.solution[i]);
+        } else {
+            while (std::find(segment.begin(), segment.end(), parent2.solution[j]) != segment.end()) {
+                ++j;
+            }
+            offspring.solution.push_back(parent2.solution[j]);
+            ++j;
+        }
+    }
+    evaluate(offspring);
+    return offspring;
 }
 
-std::vector<std::string> Population::getSelectionTypes() const {
-    return selectionList;
-}
-std::vector<std::string> Population::getCrossoverTypes() const{
-    return crossoverList;
-}
-std::vector<std::string> Population::getMutationTypes() const {
-    return mutationList;
-}
+Individual Population::simpleMutation(const Individual& parent) {
+    Individual offspring(parent);
+    double mutationRate = 0.05;
+    size_t solutionLen = parent.solution.size();
 
-void Population::setSelectionType(const std::string &type) {
-    if(std::find(selectionList.begin(), selectionList.end(), type) != selectionList.end()){
-        selectionType = type;
-    } else {
-        // add error with reference to getSelectionTypes();
+    for (size_t i = 0; i < solutionLen; ++i) {
+        if ((std::rand() / (double)RAND_MAX) < mutationRate) {
+            int j = std::rand() % solutionLen;
+            std::swap(offspring.solution[i], offspring.solution[j]);
+        }
     }
-}
-void Population::setCrossoverType(const std::string &type){
-    if(std::find(crossoverList.begin(), crossoverList.end(), type) != crossoverList.end()){
-        crossoverType = type;
-    } else {
-        // add error with reference to getCrossoverTypes();
-    }
-}
-void Population::setMutationTypes(const std::string &type){
-    if(std::find(mutationList.begin(), mutationList.end(), type) != mutationList.end()){
-        mutationType = type;
-    } else {
-        // add error with reference to getMutationTypes();
-    }
+
+    evaluate(offspring);
+    return offspring;
 }
