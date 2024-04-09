@@ -37,30 +37,37 @@ public:
     virtual void evaluate(Individual&) const = 0;
     Individual getBest() const;
 
+//    selections
     selection_t simpleSelection;
     selection_t rankSelection;
     selection_t boltzmannSelection;
     selection_t proportionalSelection;
 
-    crossover_t simpleCrossover;
-    mutation_t simpleMutation;
-
-    enum class selections { simple };
+    enum class selections { simple, rank, boltzmann, proportional };
     enum class crossovers { simple };
     enum class mutations { simple };
 
     selections selectionType = selections::simple;
-    crossovers crossoverType = crossovers::simple;
-    mutations mutationType = mutations::simple;
+    void setSelection(selections selectionType);
 
     virtual Individual selection() {
         switch (selectionType) {
             case selections::simple:
                 return simpleSelection();
+            case selections::rank:
+                return rankSelection();
+            case selections::boltzmann:
+                return boltzmannSelection();
+            case selections::proportional:
+                return proportionalSelection();
         }
     };
 
-    void setSelection(selections selectionType);
+//    crossovers
+    crossover_t simpleCrossover;
+
+    crossovers crossoverType = crossovers::simple;
+    void setCrossover(crossovers crossoverType);
 
     virtual Individual crossover(const Individual &parent1, const Individual &parent2) {
         switch (crossoverType) {
@@ -68,7 +75,12 @@ public:
                 return simpleCrossover(parent1, parent2);
         }
     }
-    void setCrossover(crossovers crossoverType);
+
+//    mutations
+    mutations mutationType = mutations::simple;
+
+    mutation_t simpleMutation;
+    void setMutation(mutations mutateType);
 
     virtual Individual mutation(const Individual &parent) {
         switch (mutationType) {
@@ -76,8 +88,6 @@ public:
                 return simpleMutation(parent);
         }
     };
-
-    void setMutation(mutations mutateType);
 };
 
 #endif //GA_LIB_POPULATION_H

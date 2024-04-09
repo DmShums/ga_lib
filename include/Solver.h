@@ -11,7 +11,7 @@ struct SetUp{
     double mutationRate;
 };
 
-class Solver{
+class Solver {
 public:
     size_t genNum;
 

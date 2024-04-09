@@ -75,8 +75,6 @@ add_executable(TSP_GA_parallel
         src/TSP_GA_parallel.cpp)
 
 add_executable(GA
-        src/GeneticAlgorithm.cpp
-        include/GeneticAlgorithm.hpp
         include/TPool.h
         src/TPool.cpp
         include/timer.h)
