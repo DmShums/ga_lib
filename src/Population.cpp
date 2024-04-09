@@ -181,7 +181,7 @@ Individual Population::uniformCrossover(const Individual &parent1, const Individ
     }
 
     for (size_t i = 0; i < solutionLen; ++i) {
-        if (offspring.solution[i] == -1) {
+        if (offspring.solution[i] == (size_t)-1) {
             for (size_t j = 0; j < solutionLen; ++j) {
                 if (!taken[j]) {
                     offspring.solution[i] = j;
