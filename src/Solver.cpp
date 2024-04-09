@@ -1,6 +1,6 @@
 #include "Solver.h"
 
-#define DEBUG true
+#define DEBUG false
 
 Solver::Solver (SetUp setUp) {
     genNum = setUp.generationsNum;

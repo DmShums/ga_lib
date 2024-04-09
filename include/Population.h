@@ -17,8 +17,8 @@ public:
     std::vector<size_t> solution;
     int fitness;
 
-    bool operator < (const Individual& other) const {
-        return (fitness < other.fitness);
+    std::strong_ordering operator <=>(const Individual& other) const {
+        return fitness <=> other.fitness;
     }
 };
 

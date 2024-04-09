@@ -1,7 +1,5 @@
 #include "Population.h"
 
-//Individual Population::getBest() const{
-//}
 
 // Setters
 void Population::setSelection(Population::selections selectionType) {
@@ -35,14 +33,12 @@ Individual Population::simpleSelection() {
 
 Individual Population::rankSelection() {
     std::vector<Individual> sortedPopulation = population;
-    std::sort(sortedPopulation.begin(), sortedPopulation.end(),
-              [](const Individual& a, const Individual& b) {
-                  return a.fitness < b.fitness;
-              });
+    std::sort(sortedPopulation.begin(), sortedPopulation.end());
 
-    int populationSize = population.size();
+    size_t populationSize = population.size();
     std::vector<double> probabilities(populationSize);
-    for (int i = 0; i < populationSize; ++i) {
+
+    for (size_t i = 0; i < populationSize; ++i) {
         // Higher probability to individuals with higher rank
         probabilities[i] = (2.0 * (populationSize - i)) / (populationSize * (populationSize + 1));
     }
