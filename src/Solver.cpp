@@ -1,6 +1,6 @@
 #include "Solver.h"
 
-#define DEBUG false
+#define DEBUG true
 
 Solver::Solver (SetUp setUp) {
     genNum = setUp.generationsNum;
@@ -40,6 +40,7 @@ Individual Solver::solve(Population &population) {
 
     for (size_t generation = 0; generation < genNum; ++generation) {
         std::vector<std::future<Individual>> fut_population;
+        ++population.generationNumber;
 
         // crossover tasks
         for (size_t i = 0; i < crossoverPairsNum; ++i) {
@@ -59,6 +60,7 @@ Individual Solver::solve(Population &population) {
             fut_population.emplace_back(std::move(future));
         }
 
+        // get all results from ThreadPool
         std::vector<Individual> new_population;
         for (auto &f: fut_population) {
             new_population.emplace_back(f.get());

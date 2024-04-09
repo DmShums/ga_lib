@@ -16,6 +16,7 @@ class Individual {
 public:
     std::vector<size_t> solution;
     int fitness;
+
     bool operator < (const Individual& other) const {
         return (fitness < other.fitness);
     }
@@ -33,9 +34,12 @@ protected:
 
 public:
     std::vector<Individual> population;
+    size_t generationNumber = 0;
 
     virtual void evaluate(Individual&) const = 0;
-    Individual getBest() const;
+    virtual Individual getBest() const {
+        return *min_element(population.begin(), population.end());
+    };
 
 //    selections
     selection_t simpleSelection;

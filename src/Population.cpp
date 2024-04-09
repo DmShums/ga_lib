@@ -1,8 +1,7 @@
 #include "Population.h"
 
-Individual Population::getBest() const{
-    return *min_element(population.begin(), population.end());
-}
+//Individual Population::getBest() const{
+//}
 
 // Setters
 void Population::setSelection(Population::selections selectionType) {
@@ -57,7 +56,7 @@ Individual Population::rankSelection() {
     return sortedPopulation[selectedIndex];
 }
 
-double calculateTemperature(int generation) {
+double calculateTemperature(size_t generation) {
     double initial_temperature = 100.0;
     double cooling_factor = 0.9;
 
@@ -66,7 +65,7 @@ double calculateTemperature(int generation) {
 
 Individual Population::boltzmannSelection() {
     // Sum of Boltzmann factors
-    auto temperature = calculateTemperature(1);
+    auto temperature = calculateTemperature(generationNumber);
     double sum = 0.0;
     for (const Individual& individual : population) {
         sum += std::exp(individual.fitness / temperature);
@@ -81,6 +80,7 @@ Individual Population::boltzmannSelection() {
     double partialSum = 0.0;
     for (const Individual& individual : population) {
         partialSum += std::exp(individual.fitness / temperature);
+
         if (partialSum >= randNum) {
             return individual;
         }

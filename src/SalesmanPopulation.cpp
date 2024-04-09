@@ -1,6 +1,5 @@
 #include "SalesmanPopulation.h"
 
-
 std::vector<size_t> getRandomPermutation(size_t len){
     std::vector<size_t> permutation(len);
 
@@ -11,17 +10,6 @@ std::vector<size_t> getRandomPermutation(size_t len){
     std::shuffle(permutation.begin(), permutation.end(), std::mt19937(std::random_device()()));
     return permutation;
 }
-
-SalesmanPopulation::SalesmanPopulation(const std::vector<std::vector<int>>& distMatrix,
-                                       size_t populationSize) : distMatrix(distMatrix) {
-    for (size_t i = 0; i < populationSize; ++i) {
-        Individual ind{};
-        ind.solution = getRandomPermutation(distMatrix.size());
-        evaluate(ind);
-        population.emplace_back(ind);
-    }
-}
-
 
 void SalesmanPopulation::evaluate(Individual& ind) const {
     int fitness = 0;
@@ -35,6 +23,16 @@ void SalesmanPopulation::evaluate(Individual& ind) const {
 
     fitness += distMatrix[ind.solution.back()][ind.solution[0]];
     ind.fitness = fitness;
+}
+
+SalesmanPopulation::SalesmanPopulation(const std::vector<std::vector<int>>& distMatrix,
+                                       size_t populationSize) : distMatrix(distMatrix) {
+    for (size_t i = 0; i < populationSize; ++i) {
+        Individual ind{};
+        ind.solution = getRandomPermutation(distMatrix.size());
+        evaluate(ind);
+        population.emplace_back(ind);
+    }
 }
 
 /*

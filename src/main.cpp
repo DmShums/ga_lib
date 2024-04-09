@@ -43,6 +43,7 @@ int main(){
     Solver solver(setUp);
 
     SalesmanPopulation population(distance_matrix, 1000);
+    population.setSelection(Population::selections::boltzmann);
 
 //  if you want to change in-build type, use this
 //    population.setCrossover(Population::crossovers::simple);
