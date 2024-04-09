@@ -5,14 +5,16 @@
 #include "TPool.h"
 
 struct SetUp {
-    size_t generationsNum;
-    double crossoverRate;
-    double mutationRate;
+    size_t generationsNum{};
+    double crossoverRate{};
+    double mutationRate{};
+    bool sorted = false;
 };
 
 class Solver {
 public:
     size_t genNum;
+    bool sorted;
 
     double crossoverRate;
     double mutationRate;

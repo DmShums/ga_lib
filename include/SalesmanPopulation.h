@@ -13,6 +13,7 @@ public:
                        size_t populationSize);
 
     void evaluate(Individual& ind) const override;
+    bool isFirstBetterThanSecond(const Individual& ind1, const Individual& ind2) const override;
 
     /*
      * if you want to override mutation for you implementation, use this.

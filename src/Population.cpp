@@ -31,11 +31,7 @@ Individual Population::simpleSelection() {
 }
 
 Individual Population::rankSelection() {
-    std::vector<Individual> sortedPopulation = population;
-    std::sort(sortedPopulation.begin(), sortedPopulation.end(), [this](const Individual& ind1, const Individual& ind2){
-        return isFirstBetterThanSecond(ind1, ind2);
-    });
-
+//    the population is already sorted
     size_t populationSize = population.size();
     std::vector<double> probabilities(populationSize);
 
@@ -50,7 +46,7 @@ Individual Population::rankSelection() {
     std::discrete_distribution<> dist(probabilities.begin(), probabilities.end());
     int selectedIndex = dist(gen);
 
-    return sortedPopulation[selectedIndex];
+    return population[selectedIndex];
 }
 
 double calculateTemperature(size_t generation) {

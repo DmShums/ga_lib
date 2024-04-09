@@ -45,7 +45,7 @@ int main(){
     SalesmanPopulation population(distance_matrix, 1000);
 
     //  if you want to change in-build type, use this
-//    population.setCrossover(Population::crossovers::simple);
+//    population.setSelection(Population::selections::simple);
 
     Individual solution = solver.solve(population);
 

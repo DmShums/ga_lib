@@ -11,6 +11,10 @@ std::vector<size_t> getRandomPermutation(size_t len) {
     return permutation;
 }
 
+bool SalesmanPopulation::isFirstBetterThanSecond(const Individual& ind1, const Individual& ind2) const {
+    return ind1 < ind2;
+}
+
 void SalesmanPopulation::evaluate(Individual& ind) const {
     int fitness = 0;
     size_t prev = ind.solution.front();

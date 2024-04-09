@@ -6,21 +6,47 @@ Solver::Solver (SetUp setUp) {
     genNum = setUp.generationsNum;
     crossoverRate = setUp.crossoverRate;
     mutationRate = setUp.mutationRate;
+    sorted = setUp.sorted;
+
+    if (mutationRate < 0) {
+        std::cerr << "Wrong input. mutationRate must be >= 0" << std::endl;
+        return;
+    }
+
+    if (crossoverRate < 0) {
+        std::cerr << "Wrong input. crossoverRate must be >= 0" << std::endl;
+        return;
+    }
+
+    if (mutationRate + crossoverRate > 1) {
+        std::cerr << "Wrong inputs. mutationRate + crossoverRate must be <= 1" << std::endl;
+        return;
+    }
 }
 
 Individual Solver::solve(Population &population) {
     thread_pool pool(std::thread::hardware_concurrency());
-
-    if (mutationRate + crossoverRate > 1) {
-        std::cerr << "Wrong inputs. mutationRate + crossoverRate must be <= 1" << std::endl;
-        return Individual{};
-    }
 
     size_t noChangeIndividualsNum = population.population.size() * (1 - mutationRate - crossoverRate);
 
     mutationNum = population.population.size() * mutationRate;
     crossoverPairsNum = population.population.size() * crossoverRate;
 
+    // write all selections, crossovers and mutations that require sorted population
+    if (population.selectionType == Population::selections::rank) {
+        sorted = true;
+    }
+
+    if (sorted) {
+        std::sort(
+        population.population.begin(),
+        population.population.end(),
+        [&population](const Individual& ind1, const Individual& ind2){
+            return population.isFirstBetterThanSecond(ind1, ind2);
+        });
+    }
+
+    // all tasks
     std::function<Individual()> crossoverTask = [&population]() {
         Individual parent1 = population.selection();
         Individual parent2 = population.selection();
@@ -38,6 +64,7 @@ Individual Solver::solve(Population &population) {
         return population.selection();
     };
 
+    // main loop
     for (size_t generation = 0; generation < genNum; ++generation) {
         std::vector<std::future<Individual>> fut_population;
         ++population.generationNumber;
@@ -64,6 +91,15 @@ Individual Solver::solve(Population &population) {
         std::vector<Individual> new_population;
         for (auto &f: fut_population) {
             new_population.emplace_back(f.get());
+        }
+
+        if (sorted) {
+            std::sort(
+                    new_population.begin(),
+                    new_population.end(),
+                    [&population](const Individual& ind1, const Individual& ind2){
+                return population.isFirstBetterThanSecond(ind1, ind2);
+            });
         }
 
         population.population = new_population;

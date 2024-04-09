@@ -39,16 +39,19 @@ public:
     virtual void evaluate(Individual&) const = 0;
 
     virtual bool isFirstBetterThanSecond(const Individual& ind1, const Individual& ind2) const {
-        return ind1 < ind2;
+        return ind1 > ind2;
     }
 
     virtual Individual getBest() const {
-        return *min_element(
-                population.begin(), population.end(),
-                [this](const Individual& ind1, const Individual& ind2) {
-                    return isFirstBetterThanSecond(ind1, ind2);
+        Individual best = population.front();
+
+        for (const Individual& candidate : population) {
+            if (isFirstBetterThanSecond(candidate, best)) {
+                best = candidate;
             }
-        );
+        }
+
+        return best;
     };
 
 //    selections
