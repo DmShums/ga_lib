@@ -52,14 +52,15 @@ public:
 
     virtual Individual selection() {
         switch (selectionType) {
-            case selections::simple:
-                return simpleSelection();
             case selections::rank:
                 return rankSelection();
             case selections::boltzmann:
                 return boltzmannSelection();
             case selections::proportional:
                 return proportionalSelection();
+            case selections::simple:
+            default:
+                return simpleSelection();
         }
     };
 
@@ -72,6 +73,7 @@ public:
     virtual Individual crossover(const Individual &parent1, const Individual &parent2) {
         switch (crossoverType) {
             case crossovers::simple:
+            default:
                 return simpleCrossover(parent1, parent2);
         }
     }
@@ -85,6 +87,7 @@ public:
     virtual Individual mutation(const Individual &parent) {
         switch (mutationType) {
             case mutations::simple:
+            default:
                 return simpleMutation(parent);
         }
     };

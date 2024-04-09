@@ -116,14 +116,15 @@ Individual Population::proportionalSelection() {
 Individual Population::simpleCrossover(const Individual &parent1, const Individual &parent2) {
     Individual offspring;
     size_t solutionLen = parent1.solution.size();
-    int start = std::rand() % solutionLen;
-    int end = std::rand() % solutionLen;
+    size_t start = std::rand() % solutionLen;
+    size_t end = std::rand() % solutionLen;
+
     if (start > end) {
         std::swap(start, end);
     }
     std::vector<int> segment(parent1.solution.begin() + start, parent1.solution.begin() + end);
 
-    for (int i = 0, j = 0; i < solutionLen; ++i) {
+    for (size_t i = 0, j = 0; i < solutionLen; ++i) {
         if (i >= start && i < end) {
             offspring.solution.push_back(parent1.solution[i]);
         } else {
