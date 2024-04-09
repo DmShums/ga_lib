@@ -32,7 +32,9 @@ Individual Population::simpleSelection() {
 
 Individual Population::rankSelection() {
     std::vector<Individual> sortedPopulation = population;
-    std::sort(sortedPopulation.begin(), sortedPopulation.end());
+    std::sort(sortedPopulation.begin(), sortedPopulation.end(), [this](const Individual& ind1, const Individual& ind2){
+        return isFirstBetterThanSecond(ind1, ind2);
+    });
 
     size_t populationSize = population.size();
     std::vector<double> probabilities(populationSize);
@@ -62,6 +64,7 @@ Individual Population::boltzmannSelection() {
     // Sum of Boltzmann factors
     auto temperature = calculateTemperature(generationNumber);
     double sum = 0.0;
+
     for (const Individual& individual : population) {
         sum += std::exp(individual.fitness / temperature);
     }
@@ -96,6 +99,7 @@ Individual Population::proportionalSelection() {
 
         int randValue = dis(gen);
         int accumulatedFitness = 0;
+
         for (const Individual& ind : population) {
             accumulatedFitness += ind.fitness;
 
