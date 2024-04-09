@@ -81,6 +81,7 @@ public:
 
 //    crossovers
     crossover_t simpleCrossover;
+    crossover_t uniformCrossover;
 
     crossovers crossoverType = crossovers::simple;
     void setCrossover(crossovers crossoverType);

@@ -135,6 +135,48 @@ Individual Population::simpleCrossover(const Individual &parent1, const Individu
     return offspring;
 }
 
+// uniform crossover
+
+std::vector<int> create_mask(size_t chrom_size, float px){
+    std::vector<int> mask(0, chrom_size);
+
+    std::random_device rd;
+    std::mt19937 eng(rd());
+    std::uniform_real_distribution<> distrFloat(0.0, 1.0);
+
+
+    for (size_t i = 0; i < chrom_size; ++i){
+        float prob = distrFloat(eng);
+        if (prob < px){
+            mask[i] = 1;
+        }
+    }
+    return mask;
+}
+
+Individual Population::uniformCrossover(const Individual &parent1, const Individual &parent2){
+    Individual offspring;
+    size_t solutionLen = parent1.solution.size();
+
+    std::random_device rd;
+    std::mt19937 eng(rd());
+    std::uniform_real_distribution<> distrFloat(0.0, 1.0);
+
+    std::vector<int> mask = create_mask(solutionLen, distrFloat(eng));
+    for (int i = 0; i < solutionLen; ++i){
+        if (mask[i] == 1){
+            offspring.solution.push_back(parent1.solution[i]);
+        } else {
+            offspring.solution.push_back(parent2.solution[i]);
+        }
+    }
+
+    evaluate(offspring);
+    return offspring;
+}
+
+
+
 // default mutations
 Individual Population::simpleMutation(const Individual& parent) {
     Individual offspring(parent);
