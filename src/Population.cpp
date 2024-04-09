@@ -164,11 +164,31 @@ Individual Population::uniformCrossover(const Individual &parent1, const Individ
     std::uniform_real_distribution<> distrFloat(0.0, 1.0);
 
     std::vector<int> mask = create_mask(solutionLen, distrFloat(eng));
+    std::vector<bool> taken(solutionLen, false);
+
     for (size_t i = 0; i < solutionLen; ++i) {
         if (mask[i] == 1) {
             offspring.solution.emplace_back(parent1.solution[i]);
+            taken[parent1.solution[i]] = true;
         } else {
-            offspring.solution.emplace_back(parent2.solution[i]);
+            if (!taken[parent2.solution[i]]) {
+                offspring.solution.emplace_back(parent2.solution[i]);
+                taken[parent2.solution[i]] = true;
+            } else {
+                offspring.solution.emplace_back(-1);
+            }
+        }
+    }
+
+    for (size_t i = 0; i < solutionLen; ++i) {
+        if (offspring.solution[i] == (size_t)-1) {
+            for (size_t j = 0; j < solutionLen; ++j) {
+                if (!taken[j]) {
+                    offspring.solution[i] = j;
+                    taken[j] = true;
+                    break;
+                }
+            }
         }
     }
 
