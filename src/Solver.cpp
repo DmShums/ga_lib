@@ -10,12 +10,13 @@ Solver::Solver (SetUp setUp) {
 
 Individual Solver::solve(Population &population) {
     thread_pool pool(std::thread::hardware_concurrency());
-    size_t noChangeIndividualsNum = population.population.size() * (1 - mutationRate - crossoverRate);
 
     if (mutationRate + crossoverRate > 1) {
-        std::cerr << "Wrong inputs. mutationRate - crossoverRate must be <= 1" << std::endl;
+        std::cerr << "Wrong inputs. mutationRate + crossoverRate must be <= 1" << std::endl;
         return Individual{};
     }
+
+    size_t noChangeIndividualsNum = population.population.size() * (1 - mutationRate - crossoverRate);
 
     mutationNum = population.population.size() * mutationRate;
     crossoverPairsNum = population.population.size() * crossoverRate;
