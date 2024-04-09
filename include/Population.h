@@ -100,7 +100,10 @@ public:
 
 //    mutations
     mutation_t simpleMutation;
-    enum class mutations { simple };
+    mutation_t rotationMutation;
+    mutation_t inverseMutation;
+
+    enum class mutations { simple, rotation, inverse };
 
     mutations mutationType = mutations::simple;
 
@@ -108,6 +111,10 @@ public:
 
     virtual Individual mutation(const Individual &parent) {
         switch (mutationType) {
+            case mutations::rotation:
+                return rotationMutation(parent);
+            case mutations::inverse:
+                return inverseMutation(parent);
             case mutations::simple:
             default:
                 return simpleMutation(parent);

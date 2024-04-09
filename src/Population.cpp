@@ -193,3 +193,27 @@ Individual Population::simpleMutation(const Individual& parent) {
     evaluate(offspring);
     return offspring;
 }
+
+Individual Population::rotationMutation(const Individual& parent) {
+    Individual offspring(parent);
+    double mutationRate = 0.05;
+    size_t solutionLen = parent.solution.size();
+
+    if ((std::rand() / (double)RAND_MAX) < mutationRate) {
+        size_t subsetSize = std::rand() % solutionLen;
+        size_t startIndex = std::rand() % solutionLen;
+
+        // Rotate the elements to the right
+        std::rotate(offspring.solution.begin(), offspring.solution.begin() + startIndex, offspring.solution.end());
+    }
+
+    evaluate(offspring);
+    return offspring;
+}
+
+Individual Population::inverseMutation(const Individual& parent) {
+    Individual offspring(parent);
+    std::reverse(offspring.solution.begin(), offspring.solution.end());
+    evaluate(offspring);
+    return offspring;
+}
