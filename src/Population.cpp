@@ -1,6 +1,5 @@
 #include "Population.h"
 
-
 // Setters
 void Population::setSelection(Population::selections selectionType) {
     this->selectionType = selectionType;
@@ -23,7 +22,7 @@ Individual Population::simpleSelection() {
     for (int i = 1; i < tournament_size; ++i) {
         Individual contender = population[std::rand() % population.size()];
 
-        if (contender.fitness < best_individual.fitness) {
+        if (isFirstBetterThanSecond(contender, best_individual)) {
             best_individual = contender;
         }
     }
@@ -99,6 +98,7 @@ Individual Population::proportionalSelection() {
         int accumulatedFitness = 0;
         for (const Individual& ind : population) {
             accumulatedFitness += ind.fitness;
+
             if (accumulatedFitness >= randValue) {
                 return ind;
             }

@@ -1,6 +1,6 @@
 #include "SalesmanPopulation.h"
 
-std::vector<size_t> getRandomPermutation(size_t len){
+std::vector<size_t> getRandomPermutation(size_t len) {
     std::vector<size_t> permutation(len);
 
     for (size_t i = 0; i < len; ++i) {
@@ -13,7 +13,7 @@ std::vector<size_t> getRandomPermutation(size_t len){
 
 void SalesmanPopulation::evaluate(Individual& ind) const {
     int fitness = 0;
-    size_t prev = ind.solution[0];
+    size_t prev = ind.solution.front();
 
     for (size_t i = 1; i < ind.solution.size(); ++i) {
         size_t next = ind.solution[i];
@@ -21,7 +21,7 @@ void SalesmanPopulation::evaluate(Individual& ind) const {
         prev = next;
     }
 
-    fitness += distMatrix[ind.solution.back()][ind.solution[0]];
+    fitness += distMatrix[ind.solution.back()][ind.solution.front()];
     ind.fitness = fitness;
 }
 
@@ -40,16 +40,6 @@ SalesmanPopulation::SalesmanPopulation(const std::vector<std::vector<int>>& dist
  */
 //Individual SalesmanPopulation::mutation(const Individual& parent) {
 //    Individual offspring(parent);
-//    double mutationRate = 0.05;
-//    size_t solutionLen = parent.solution.size();
-//
-//    for (size_t i = 0; i < solutionLen; ++i) {
-//        if ((std::rand() / (double)RAND_MAX) < mutationRate) {
-//            int j = std::rand() % solutionLen;
-//            std::swap(offspring.solution[i], offspring.solution[j]);
-//        }
-//    }
-//
-//    evaluate(offspring);
+//    ...
 //    return offspring;
 //}

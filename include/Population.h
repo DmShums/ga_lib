@@ -37,8 +37,19 @@ public:
     size_t generationNumber = 0;
 
     virtual void evaluate(Individual&) const = 0;
+
+
+    virtual bool isFirstBetterThanSecond(const Individual& ind1, const Individual& ind2) const {
+        return ind1 < ind2;
+    }
+
     virtual Individual getBest() const {
-        return *min_element(population.begin(), population.end());
+        return *min_element(
+                population.begin(), population.end(),
+                [this](const Individual& ind1, const Individual& ind2) {
+                    return isFirstBetterThanSecond(ind1, ind2);
+            }
+        );
     };
 
 //    selections
