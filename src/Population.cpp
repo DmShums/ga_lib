@@ -31,11 +31,7 @@ Individual Population::simpleSelection() {
 }
 
 Individual Population::rankSelection() {
-    std::vector<Individual> sortedPopulation = population;
-    std::sort(sortedPopulation.begin(), sortedPopulation.end(), [this](const Individual& ind1, const Individual& ind2){
-        return isFirstBetterThanSecond(ind1, ind2);
-    });
-
+//    the population is already sorted
     size_t populationSize = population.size();
     std::vector<double> probabilities(populationSize);
 
@@ -50,7 +46,7 @@ Individual Population::rankSelection() {
     std::discrete_distribution<> dist(probabilities.begin(), probabilities.end());
     int selectedIndex = dist(gen);
 
-    return sortedPopulation[selectedIndex];
+    return population[selectedIndex];
 }
 
 double calculateTemperature(size_t generation) {
@@ -135,14 +131,14 @@ Individual Population::simpleCrossover(const Individual &parent1, const Individu
             ++j;
         }
     }
+
     evaluate(offspring);
     return offspring;
 }
 
 // uniform crossover
-
-std::vector<int> create_mask(size_t chrom_size, float px){
-    std::vector<int> mask(0, chrom_size);
+std::vector<int> create_mask(size_t chrom_size, double px) {
+    std::vector<int> mask(chrom_size, 0);
 
     std::random_device rd;
     std::mt19937 eng(rd());
@@ -150,8 +146,9 @@ std::vector<int> create_mask(size_t chrom_size, float px){
 
 
     for (size_t i = 0; i < chrom_size; ++i){
-        float prob = distrFloat(eng);
-        if (prob < px){
+        double prob = distrFloat(eng);
+
+        if (prob < px) {
             mask[i] = 1;
         }
     }
@@ -159,7 +156,7 @@ std::vector<int> create_mask(size_t chrom_size, float px){
 }
 
 Individual Population::uniformCrossover(const Individual &parent1, const Individual &parent2){
-    Individual offspring;
+    Individual offspring{};
     size_t solutionLen = parent1.solution.size();
 
     std::random_device rd;
@@ -167,18 +164,17 @@ Individual Population::uniformCrossover(const Individual &parent1, const Individ
     std::uniform_real_distribution<> distrFloat(0.0, 1.0);
 
     std::vector<int> mask = create_mask(solutionLen, distrFloat(eng));
-    for (int i = 0; i < solutionLen; ++i){
-        if (mask[i] == 1){
-            offspring.solution.push_back(parent1.solution[i]);
+    for (size_t i = 0; i < solutionLen; ++i) {
+        if (mask[i] == 1) {
+            offspring.solution.emplace_back(parent1.solution[i]);
         } else {
-            offspring.solution.push_back(parent2.solution[i]);
+            offspring.solution.emplace_back(parent2.solution[i]);
         }
     }
 
     evaluate(offspring);
     return offspring;
 }
-
 
 
 // default mutations

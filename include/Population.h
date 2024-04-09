@@ -39,16 +39,19 @@ public:
     virtual void evaluate(Individual&) const = 0;
 
     virtual bool isFirstBetterThanSecond(const Individual& ind1, const Individual& ind2) const {
-        return ind1 < ind2;
+        return ind1 > ind2;
     }
 
     virtual Individual getBest() const {
-        return *min_element(
-                population.begin(), population.end(),
-                [this](const Individual& ind1, const Individual& ind2) {
-                    return isFirstBetterThanSecond(ind1, ind2);
+        Individual best = population.front();
+
+        for (const Individual& candidate : population) {
+            if (isFirstBetterThanSecond(candidate, best)) {
+                best = candidate;
             }
-        );
+        }
+
+        return best;
     };
 
 //    selections
@@ -58,8 +61,6 @@ public:
     selection_t proportionalSelection;
 
     enum class selections { simple, rank, boltzmann, proportional };
-    enum class crossovers { simple };
-    enum class mutations { simple };
 
     selections selectionType = selections::simple;
     void setSelection(selections selectionType);
@@ -82,11 +83,15 @@ public:
     crossover_t simpleCrossover;
     crossover_t uniformCrossover;
 
+    enum class crossovers { simple, uniform };
+
     crossovers crossoverType = crossovers::simple;
     void setCrossover(crossovers crossoverType);
 
     virtual Individual crossover(const Individual &parent1, const Individual &parent2) {
         switch (crossoverType) {
+            case crossovers::uniform:
+                return uniformCrossover(parent1, parent2);
             case crossovers::simple:
             default:
                 return simpleCrossover(parent1, parent2);
@@ -94,9 +99,11 @@ public:
     }
 
 //    mutations
+    mutation_t simpleMutation;
+    enum class mutations { simple };
+
     mutations mutationType = mutations::simple;
 
-    mutation_t simpleMutation;
     void setMutation(mutations mutateType);
 
     virtual Individual mutation(const Individual &parent) {
