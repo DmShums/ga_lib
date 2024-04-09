@@ -6,6 +6,16 @@ Solver::Solver (SetUp setUp) {
     genNum = setUp.generationsNum;
     crossoverRate = setUp.crossoverRate;
     mutationRate = setUp.mutationRate;
+    absError = setUp.absError;
+    relError = setUp.relError;
+    reachBothErrorBounds = setUp.reachBothErrorBounds;
+}
+
+bool Solver::reachedErrorBounds(const Individual &prevBest, const Individual &newBest, bool useAnd){
+    bool reachedAbsErr = (prevBest.fitness - newBest.fitness) < absError;
+    bool reachedRelErr = (double)(prevBest.fitness - newBest.fitness) / (double)prevBest.fitness < relError;
+
+    return reachedAbsErr && reachedRelErr || (useAnd && (reachedAbsErr || reachedRelErr));
 }
 
 Individual Solver::solve(Population &population) {
@@ -66,7 +76,11 @@ Individual Solver::solve(Population &population) {
             new_population.emplace_back(f.get());
         }
 
+        Individual prevBest = population.getBest();
         population.population = new_population;
+        Individual newBest = population.getBest();
+
+//        if (reachedErrorBounds(prevBest, newBest, reachBothErrorBounds)) break;
 
 #if DEBUG
         std::cout << "Generation " << generation << std::endl;

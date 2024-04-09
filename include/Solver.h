@@ -8,9 +8,21 @@ struct SetUp {
     size_t generationsNum;
     double crossoverRate;
     double mutationRate;
+    int absError = 0;
+    double relError = 0;
+    bool reachBothErrorBounds = false;
 };
 
 class Solver {
+private:
+    double relError;
+    int absError;
+    bool checkError;
+    bool reachBothErrorBounds;
+
+    bool reachedErrorBounds(const Individual &prevBest,
+                            const Individual &newBest,
+                            bool useAnd);
 public:
     size_t genNum;
 
