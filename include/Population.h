@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <iostream>
 #include <random>
+#include <limits>
 
 class Individual {
 /*

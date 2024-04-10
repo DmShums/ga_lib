@@ -137,6 +137,7 @@ Individual Population::simpleCrossover(const Individual &parent1, const Individu
 }
 
 // uniform crossover
+
 std::vector<int> create_mask(size_t chrom_size, double px) {
     std::vector<int> mask(chrom_size, 0);
 
@@ -168,8 +169,12 @@ Individual Population::uniformCrossover(const Individual &parent1, const Individ
 
     for (size_t i = 0; i < solutionLen; ++i) {
         if (mask[i] == 1) {
-            offspring.solution.emplace_back(parent1.solution[i]);
-            taken[parent1.solution[i]] = true;
+            if (!taken[parent1.solution[i]]) {
+                offspring.solution.emplace_back(parent1.solution[i]);
+                taken[parent1.solution[i]] = true;
+            } else {
+                offspring.solution.emplace_back(std::numeric_limits<size_t>::max());
+            }
         } else {
             if (!taken[parent2.solution[i]]) {
                 offspring.solution.emplace_back(parent2.solution[i]);
@@ -181,7 +186,7 @@ Individual Population::uniformCrossover(const Individual &parent1, const Individ
     }
 
     for (size_t i = 0; i < solutionLen; ++i) {
-        if (offspring.solution[i] == (size_t)-1) {
+        if (offspring.solution[i] == std::numeric_limits<size_t>::max()) {
             for (size_t j = 0; j < solutionLen; ++j) {
                 if (!taken[j]) {
                     offspring.solution[i] = j;
@@ -195,6 +200,7 @@ Individual Population::uniformCrossover(const Individual &parent1, const Individ
     evaluate(offspring);
     return offspring;
 }
+
 
 
 // default mutations

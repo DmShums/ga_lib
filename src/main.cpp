@@ -46,7 +46,7 @@ int main(){
 
     //  if you want to change in-build type, use this
 //    population.setSelection(Population::selections::simple);
-//    population.setCrossover(Population::crossovers::uniform);
+    population.setCrossover(Population::crossovers::uniform);
 
     Individual solution = solver.solve(population);
 
