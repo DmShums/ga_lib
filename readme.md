@@ -1,4 +1,3 @@
-## Genetic Algorithm Library
 
 There are plenty of NP-complete algorithms, which
 require a lot of time to be solved. The genetic algorithms allow
@@ -42,7 +41,8 @@ _Experimental features:_
 - relError: `double = 0` — the same as `absError`, but in relative. 
 - reachBothErrorBounds: `bool = false` — do we need to achieve only one error or two at the same time.
 
-Also, the Solver class has a method `Individual solve(Population& population)` to get the solution of your problem.
+Also, the Solver class has a method `Individual solve(Population& population)` to get the solution of your problem. 
+Also, this method has second optional argument: number of threads to run in parallel. By default, `std::thread::hardware_concurrency()`.
 
 #### Individual
 Abstract individual class. This class contains:
