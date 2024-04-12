@@ -84,29 +84,29 @@ Individual Population::boltzmannSelection() {
 }
 
 Individual Population::proportionalSelection() {
-        int totalFitness = 0;
-        for (const Individual& ind : population) {
-            totalFitness += ind.fitness;
-        }
-
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dis(0, totalFitness);
-
-        int randValue = dis(gen);
-        int accumulatedFitness = 0;
-
-        for (const Individual& ind : population) {
-            accumulatedFitness += ind.fitness;
-
-            if (accumulatedFitness >= randValue) {
-                return ind;
-            }
-        }
-
-        // This line should never be reached but added for compiler safety
-        return population.back();
+    int totalFitness = 0;
+    for (const Individual& ind : population) {
+        totalFitness += ind.fitness;
     }
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(0, totalFitness);
+
+    int randValue = dis(gen);
+    int accumulatedFitness = 0;
+
+    for (const Individual& ind : population) {
+        accumulatedFitness += ind.fitness;
+
+        if (accumulatedFitness >= randValue) {
+            return ind;
+        }
+    }
+
+    // This line should never be reached but added for compiler safety
+    return population.back();
+}
 
 // default crossovers
 Individual Population::simpleCrossover(const Individual &parent1, const Individual &parent2) {
@@ -131,9 +131,75 @@ Individual Population::simpleCrossover(const Individual &parent1, const Individu
             ++j;
         }
     }
+
     evaluate(offspring);
     return offspring;
 }
+
+// uniform crossover
+std::vector<int> create_mask(size_t chrom_size, double px) {
+    std::vector<int> mask(chrom_size, 0);
+
+    std::random_device rd;
+    std::mt19937 eng(rd());
+    std::uniform_real_distribution<> distrFloat(0.0, 1.0);
+
+
+    for (size_t i = 0; i < chrom_size; ++i){
+        double prob = distrFloat(eng);
+
+        if (prob < px) {
+            mask[i] = 1;
+        }
+    }
+    return mask;
+}
+
+Individual Population::uniformCrossover(const Individual &parent1, const Individual &parent2){
+    Individual offspring{};
+    size_t solutionLen = parent1.solution.size();
+
+    std::random_device rd;
+    std::mt19937 eng(rd());
+    std::uniform_real_distribution<> distrFloat(0.0, 1.0);
+
+    std::vector<int> mask = create_mask(solutionLen, distrFloat(eng));
+    std::vector<bool> taken(solutionLen, false);
+
+    for (size_t i = 0; i < solutionLen; ++i) {
+        if (mask[i] == 1) {
+            if (!taken[parent1.solution[i]]) {
+                offspring.solution.emplace_back(parent1.solution[i]);
+                taken[parent1.solution[i]] = true;
+            } else {
+                offspring.solution.emplace_back(std::numeric_limits<size_t>::max());
+            }
+        } else {
+            if (!taken[parent2.solution[i]]) {
+                offspring.solution.emplace_back(parent2.solution[i]);
+                taken[parent2.solution[i]] = true;
+            } else {
+                offspring.solution.emplace_back(-1);
+            }
+        }
+    }
+
+    for (size_t i = 0; i < solutionLen; ++i) {
+        if (offspring.solution[i] == std::numeric_limits<size_t>::max()) {
+            for (size_t j = 0; j < solutionLen; ++j) {
+                if (!taken[j]) {
+                    offspring.solution[i] = j;
+                    taken[j] = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    evaluate(offspring);
+    return offspring;
+}
+
 
 // default mutations
 Individual Population::simpleMutation(const Individual& parent) {
@@ -148,6 +214,30 @@ Individual Population::simpleMutation(const Individual& parent) {
         }
     }
 
+    evaluate(offspring);
+    return offspring;
+}
+
+Individual Population::rotationMutation(const Individual& parent) {
+    Individual offspring(parent);
+    double mutationRate = 0.05;
+    size_t solutionLen = parent.solution.size();
+
+    if ((std::rand() / (double)RAND_MAX) < mutationRate) {
+        size_t subsetSize = std::rand() % solutionLen;
+        size_t startIndex = std::rand() % solutionLen;
+
+        // Rotate the elements to the right
+        std::rotate(offspring.solution.begin(), offspring.solution.begin() + startIndex, offspring.solution.end());
+    }
+
+    evaluate(offspring);
+    return offspring;
+}
+
+Individual Population::inverseMutation(const Individual& parent) {
+    Individual offspring(parent);
+    std::reverse(offspring.solution.begin(), offspring.solution.end());
     evaluate(offspring);
     return offspring;
 }

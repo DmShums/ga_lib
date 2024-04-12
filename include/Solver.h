@@ -8,10 +8,24 @@ struct SetUp {
     size_t generationsNum{};
     double crossoverRate{};
     double mutationRate{};
+
+    int absError = 0;
+    double relError = 0;
+    bool reachBothErrorBounds = false;
+
     bool sorted = false;
 };
 
 class Solver {
+private:
+    double relError;
+    int absError;
+    bool checkError;
+    bool reachBothErrorBounds;
+
+    bool reachedErrorBounds(const Individual &prevBest,
+                            const Individual &newBest,
+                            bool useAnd);
 public:
     size_t genNum;
     bool sorted;
@@ -24,7 +38,7 @@ public:
 
     explicit Solver(SetUp setUp);
 
-    Individual solve(Population& population);
+    Individual solve(Population& population, size_t threads = std::thread::hardware_concurrency());
 };
 
 #endif //GA_LIB_SOLVER_H

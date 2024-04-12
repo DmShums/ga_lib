@@ -2,10 +2,15 @@
 
 #define DEBUG false
 
-Solver::Solver (SetUp setUp) {
+Solver::Solver(SetUp setUp) {
     genNum = setUp.generationsNum;
     crossoverRate = setUp.crossoverRate;
     mutationRate = setUp.mutationRate;
+
+    absError = setUp.absError;
+    relError = setUp.relError;
+    reachBothErrorBounds = setUp.reachBothErrorBounds;
+
     sorted = setUp.sorted;
 
     if (mutationRate < 0) {
@@ -24,8 +29,15 @@ Solver::Solver (SetUp setUp) {
     }
 }
 
-Individual Solver::solve(Population &population) {
-    thread_pool pool(std::thread::hardware_concurrency());
+bool Solver::reachedErrorBounds(const Individual &prevBest, const Individual &newBest, bool useAnd){
+    bool reachedAbsErr = (prevBest.fitness - newBest.fitness) < absError;
+    bool reachedRelErr = (double)(prevBest.fitness - newBest.fitness) / (double)prevBest.fitness < relError;
+
+    return reachedAbsErr && reachedRelErr || (useAnd && (reachedAbsErr || reachedRelErr));
+}
+
+Individual Solver::solve(Population &population, size_t threads) {
+    thread_pool pool(threads);
 
     size_t noChangeIndividualsNum = population.population.size() * (1 - mutationRate - crossoverRate);
 
@@ -102,7 +114,12 @@ Individual Solver::solve(Population &population) {
             });
         }
 
+//        Individual prevBest = population.getBest();
         population.population = new_population;
+
+//        Individual newBest = population.getBest();
+
+//        if (reachedErrorBounds(prevBest, newBest, reachBothErrorBounds)) break;
 
 #if DEBUG
         std::cout << "Generation " << generation << std::endl;

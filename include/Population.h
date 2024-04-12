@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <iostream>
 #include <random>
+#include <limits>
 
 class Individual {
 /*
@@ -61,8 +62,6 @@ public:
     selection_t proportionalSelection;
 
     enum class selections { simple, rank, boltzmann, proportional };
-    enum class crossovers { simple };
-    enum class mutations { simple };
 
     selections selectionType = selections::simple;
     void setSelection(selections selectionType);
@@ -83,12 +82,17 @@ public:
 
 //    crossovers
     crossover_t simpleCrossover;
+    crossover_t uniformCrossover;
+
+    enum class crossovers { simple, uniform };
 
     crossovers crossoverType = crossovers::simple;
     void setCrossover(crossovers crossoverType);
 
     virtual Individual crossover(const Individual &parent1, const Individual &parent2) {
         switch (crossoverType) {
+            case crossovers::uniform:
+                return uniformCrossover(parent1, parent2);
             case crossovers::simple:
             default:
                 return simpleCrossover(parent1, parent2);
@@ -96,13 +100,22 @@ public:
     }
 
 //    mutations
+    mutation_t simpleMutation;
+    mutation_t rotationMutation;
+    mutation_t inverseMutation;
+
+    enum class mutations { simple, rotation, inverse };
+
     mutations mutationType = mutations::simple;
 
-    mutation_t simpleMutation;
     void setMutation(mutations mutateType);
 
     virtual Individual mutation(const Individual &parent) {
         switch (mutationType) {
+            case mutations::rotation:
+                return rotationMutation(parent);
+            case mutations::inverse:
+                return inverseMutation(parent);
             case mutations::simple:
             default:
                 return simpleMutation(parent);
