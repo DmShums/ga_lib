@@ -36,8 +36,8 @@ bool Solver::reachedErrorBounds(const Individual &prevBest, const Individual &ne
     return reachedAbsErr && reachedRelErr || (useAnd && (reachedAbsErr || reachedRelErr));
 }
 
-Individual Solver::solve(Population &population) {
-    thread_pool pool(std::thread::hardware_concurrency());
+Individual Solver::solve(Population &population, size_t threads) {
+    thread_pool pool(threads);
 
     size_t noChangeIndividualsNum = population.population.size() * (1 - mutationRate - crossoverRate);
 

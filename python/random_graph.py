@@ -1,7 +1,7 @@
 """ generate random matrix """
 import random
 
-number = 20
+number = 50
 
 def random_matrix(number):
     result = []
@@ -18,8 +18,9 @@ def random_matrix(number):
             result[j][i] = result[i][j]
 
     print('writing')
-    with open('../data/graph.csv', 'w', encoding='utf-8') as file:
+    with open('./data/graph.csv', 'w', encoding='utf-8') as file:
         file.write("\n".join(",".join(row) for row in result))
 
 
-random_matrix(number)
+if __name__ == "__main__":
+    random_matrix(number)

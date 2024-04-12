@@ -84,29 +84,29 @@ Individual Population::boltzmannSelection() {
 }
 
 Individual Population::proportionalSelection() {
-        int totalFitness = 0;
-        for (const Individual& ind : population) {
-            totalFitness += ind.fitness;
-        }
-
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dis(0, totalFitness);
-
-        int randValue = dis(gen);
-        int accumulatedFitness = 0;
-
-        for (const Individual& ind : population) {
-            accumulatedFitness += ind.fitness;
-
-            if (accumulatedFitness >= randValue) {
-                return ind;
-            }
-        }
-
-        // This line should never be reached but added for compiler safety
-        return population.back();
+    int totalFitness = 0;
+    for (const Individual& ind : population) {
+        totalFitness += ind.fitness;
     }
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(0, totalFitness);
+
+    int randValue = dis(gen);
+    int accumulatedFitness = 0;
+
+    for (const Individual& ind : population) {
+        accumulatedFitness += ind.fitness;
+
+        if (accumulatedFitness >= randValue) {
+            return ind;
+        }
+    }
+
+    // This line should never be reached but added for compiler safety
+    return population.back();
+}
 
 // default crossovers
 Individual Population::simpleCrossover(const Individual &parent1, const Individual &parent2) {
@@ -137,7 +137,6 @@ Individual Population::simpleCrossover(const Individual &parent1, const Individu
 }
 
 // uniform crossover
-
 std::vector<int> create_mask(size_t chrom_size, double px) {
     std::vector<int> mask(chrom_size, 0);
 
@@ -200,7 +199,6 @@ Individual Population::uniformCrossover(const Individual &parent1, const Individ
     evaluate(offspring);
     return offspring;
 }
-
 
 
 // default mutations

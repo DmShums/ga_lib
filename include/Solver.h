@@ -38,7 +38,7 @@ public:
 
     explicit Solver(SetUp setUp);
 
-    Individual solve(Population& population);
+    Individual solve(Population& population, size_t threads = std::thread::hardware_concurrency());
 };
 
 #endif //GA_LIB_SOLVER_H

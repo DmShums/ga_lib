@@ -4,6 +4,7 @@
 
 #include "Solver.h"
 #include "SalesmanPopulation.h"
+#include "timer.h"
 
 std::vector<std::vector<int>> readCSVFile(const std::string& filename) {
     std::vector<std::vector<int>> data;
@@ -30,12 +31,13 @@ std::vector<std::vector<int>> readCSVFile(const std::string& filename) {
     return data;
 }
 
-int main(){
-    auto filename = "../data/graph.csv";
+int main(int argc, char* argv[]) {
+    auto threads = atoi(argv[1]);
+    auto filename = "./data/graph.csv";
     auto distance_matrix = readCSVFile(filename);
 
     SetUp setUp {
-        .generationsNum = 1000, // 1000
+        .generationsNum = 1000,
         .crossoverRate = 0.5,
         .mutationRate = 0.2
     };
@@ -44,11 +46,18 @@ int main(){
 
     SalesmanPopulation population(distance_matrix, 1000);
 
-    //  if you want to change in-build type, use this
+    //  if you want to change in-build type, use this constructions
 //    population.setSelection(Population::selections::simple);
-    population.setCrossover(Population::crossovers::uniform);
+//    population.setCrossover(Population::crossovers::uniform);
 
-    Individual solution = solver.solve(population);
+    auto start_time = get_current_time_fenced();
+
+    Individual solution = solver.solve(population, threads);
+
+    auto finish_time = get_current_time_fenced();
+    auto time = finish_time - start_time;
+
+    std::cout << to_us(time) << std::endl;
 
     std::cout
         << "distance: " << solution.fitness << std::endl
