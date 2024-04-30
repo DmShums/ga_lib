@@ -97,6 +97,10 @@ add_executable(structured_ga
         src/TPool.cpp
 )
 
+add_executable(knapsack_ga
+       src/knapsack_ga.cpp
+)
+
 #! Put path to your project headers
 target_include_directories(held-carp_parallel PRIVATE include)
 target_include_directories(TSP_GA PRIVATE include)

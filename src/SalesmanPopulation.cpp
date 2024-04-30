@@ -1,4 +1,5 @@
 #include "SalesmanPopulation.h"
+#define OVERRIDE false
 
 std::vector<size_t> getRandomPermutation(size_t len) {
     std::vector<size_t> permutation(len);
@@ -39,11 +40,15 @@ SalesmanPopulation::SalesmanPopulation(const std::vector<std::vector<int>>& dist
     }
 }
 
-/*
- * if you want to override, use this.
- */
-//Individual SalesmanPopulation::mutation(const Individual& parent) {
-//    Individual offspring(parent);
-//    ...
-//    return offspring;
-//}
+#if OVERRIDE
+    /*
+    * if you want to override, use this.
+    */
+    Individual SalesmanPopulation::mutation(const Individual& parent) {
+    Individual offspring(parent);
+
+    // your implementation
+
+    return offspring;
+    }
+#endif
