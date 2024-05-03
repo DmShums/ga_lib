@@ -58,13 +58,13 @@ include(cmake/CompilerWarnings.cmake)
 ###### uncomment ######
 
 add_executable(held-carp_parallel
-        src/held-carp_parallel.cpp
+        additional/held-carp_parallel.cpp
         include/timer.h
         include/TreadSafeQ.h)
 
 add_executable(TSP_GA
         include/timer.h
-        src/TSP_GA.cpp
+        additional/TSP_GA.cpp
         include/TreadSafeQ.h)
 
 add_executable(TSP_GA_parallel
@@ -72,20 +72,15 @@ add_executable(TSP_GA_parallel
         include/TreadSafeQ.h
         include/TPool.h
         src/TPool.cpp
-        src/TSP_GA_parallel.cpp)
-
-add_executable(GA
-        include/TPool.h
-        src/TPool.cpp
-        include/timer.h)
+        additional/TSP_GA_parallel.cpp)
 
 add_executable(structured_ga
-        src/main.cpp
+        examples/main.cpp
 
         include/Population.h
         src/Population.cpp
 
-        src/SalesmanPopulation.cpp
+        examples/SalesmanPopulation.cpp
         include/SalesmanPopulation.h
 
         include/Solver.h
@@ -98,7 +93,7 @@ add_executable(structured_ga
 )
 
 add_executable(knapsack_ga
-       src/knapsack_ga.cpp
+        examples/knapsack_ga.cpp
 )
 
 #! Put path to your project headers
