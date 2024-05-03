@@ -57,40 +57,23 @@ include(cmake/CompilerWarnings.cmake)
 #add_executable(held-carp held-carp.cpp timer.h)
 ###### uncomment ######
 
-# add_executable(held-carp_parallel
-#         additional/held-carp_parallel.cpp
-#         include/timer.h
-#         include/TreadSafeQ.h)
+add_executable(sizeThreadTest
+        examples/sizeThreadsComparison.cpp
 
-# add_executable(TSP_GA
-#         include/timer.h
-#         additional/TSP_GA.cpp
-#         include/TreadSafeQ.h)
+        include/Population.h
+        src/Population.cpp
 
-# add_executable(TSP_GA_parallel
-#         include/timer.h
-#         include/TreadSafeQ.h
-#         include/TPool.h
-#         src/TPool.cpp
-#         additional/TSP_GA_parallel.cpp)
+        include/SalesmanPopulation.h
+        examples/SalesmanPopulation.cpp
 
-# add_executable(structured_ga
-#         examples/main.cpp
+        include/Solver.h
+        src/Solver.cpp
 
-#         include/Population.h
-#         src/Population.cpp
-
-#         examples/SalesmanPopulation.cpp
-#         include/SalesmanPopulation.h
-
-#         include/Solver.h
-#         src/Solver.cpp
-
-#         include/timer.h
-#         include/TreadSafeQ.h
-#         include/TPool.h
-#         src/TPool.cpp
-# )
+        include/timer.h
+        include/TreadSafeQ.h
+        include/TPool.h
+        src/TPool.cpp
+)
 
 add_executable(knapsack_ga
         examples/main.cpp
@@ -111,13 +94,14 @@ add_executable(knapsack_ga
 )
 
 #! Put path to your project headers
-# target_include_directories(held-carp_parallel PRIVATE include)
-# target_include_directories(TSP_GA PRIVATE include)
-# target_include_directories(TSP_GA_parallel PRIVATE include)
-# target_include_directories(structured_ga PRIVATE include)
-target_include_directories(knapsack_ga PRIVATE include)
+target_include_directories(held-carp_parallel PRIVATE include)
+target_include_directories(TSP_GA PRIVATE include)
+target_include_directories(TSP_GA_parallel PRIVATE include)
+#target_include_directories(GA PRIVATE include)
+target_include_directories(structured_ga PRIVATE include)
+target_include_directories(sizeThreadTest PRIVATE include)
+# target_include_directories(knapsack_ga PRIVATE include)
 
-# target_include_directories(GA PRIVATE include)
 
 ###### uncomment ######
 

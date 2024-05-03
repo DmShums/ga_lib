@@ -33,46 +33,26 @@ std::vector<std::vector<int>> readCSVFile(const std::string& filename) {
 
 int main(int argc, char* argv[]){
     //  ./structured_ga.exe generations testFucntion type
-    auto filename = "../data/graph.csv";
-    auto distance_matrix = readCSVFile(filename);
 
     SetUp setUp;
-    setUp.generationsNum = std::stoi(argv[1]);
+    auto path = argv[1];
+    auto distance_matrix = readCSVFile(path);
+
     SalesmanPopulation population(distance_matrix, 1000);
+    population.setCrossover(Population::crossovers::simple);
+    population.setMutation(Population::mutations::rotation);
+    population.setSelection(Population::selections::simple);
 
-    if (argv[2] == "crossover"){
-        setUp.crossoverRate = 0.5;
-        setUp.mutationRate = 0.4;
+    setUp.generationsNum = std::stoi(argv[2]);
+    setUp.crossoverRate = 0.5;
+    setUp.mutationRate = 0.4;
 
-        if (argv[3] == "uniform"){
-            population.setCrossover(Population::crossovers::uniform);
-        }
-    } else if (argv[2] == "mutation"){
-        setUp.crossoverRate = 0.2;
-        setUp.mutationRate = 0.5;
-
-        if (argv[3] == "inverse"){
-            population.setMutation(Population::mutations::inverse);
-        } else if (argv[3] == "rotation") {
-            population.setMutation(Population::mutations::rotation);
-        }
-    } else {
-        setUp.crossoverRate = 0.5;
-        setUp.mutationRate = 0.4;
-
-        if (argv[3] == "rank"){
-            population.setSelection(Population::selections::rank);
-        } else if (argv[3] == "boltzmann"){
-            population.setSelection(Population::selections::boltzmann);
-        } else if (argv[3] == "proportional"){
-            population.setSelection(Population::selections::proportional);
-        }
-    }
+    size_t threads = std::stoi(argv[3]);
 
     Solver solver(setUp);
 
     auto start_time = get_current_time_fenced();
-    Individual solution = solver.solve(population);
+    Individual solution = solver.solve(population, threads);
     auto finish_time = get_current_time_fenced();
     auto time = finish_time - start_time;
 
