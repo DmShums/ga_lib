@@ -45,10 +45,10 @@ SalesmanPopulation::SalesmanPopulation(const std::vector<std::vector<int>>& dist
     * if you want to override, use this.
     */
     Individual SalesmanPopulation::mutation(const Individual& parent) {
-    Individual offspring(parent);
+        Individual offspring(parent);
 
-    // your implementation
+        // your implementation
 
-    return offspring;
+        return offspring;
     }
 #endif

@@ -29,7 +29,7 @@ option(ENABLE_PVS_STUDIO "PVS Studio code analyser" OFF)
 
 #! UndefinedBehaviorSanitizer (UBSan).
 #  Info: https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
-set(ENABLE_UBSan ON)
+set(ENABLE_UBSan OFF)
 #! AddressSanitizer -- detects use after free or after scope exit,
 #  memory overflows and leaks.
 #  Info: https://github.com/google/sanitizers/wiki/AddressSanitizer
@@ -102,11 +102,11 @@ add_executable(knapsack_ga
 )
 
 #! Put path to your project headers
-target_include_directories(held-carp_parallel PRIVATE include)
-target_include_directories(TSP_GA PRIVATE include)
-target_include_directories(TSP_GA_parallel PRIVATE include)
-target_include_directories(GA PRIVATE include)
-target_include_directories(structured_ga PRIVATE include)
+# target_include_directories(held-carp_parallel PRIVATE include)
+# target_include_directories(TSP_GA PRIVATE include)
+# target_include_directories(TSP_GA_parallel PRIVATE include)
+# target_include_directories(GA PRIVATE include)
+# target_include_directories(structured_ga PRIVATE include)
 
 ###### uncomment ######
 
@@ -128,9 +128,9 @@ target_link_libraries(held-carp_parallel PRIVATE TBB::tbb)
 
 ###### uncomment ######
 
-#INSTALL(PROGRAMS
-#        $<TARGET_FILE:held-carp>	# ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
-#        DESTINATION bin)
+INSTALL(PROGRAMS
+       $<TARGET_FILE:held-carp>	# ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
+       DESTINATION bin)
 
 ###### uncomment ######
 
