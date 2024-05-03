@@ -57,31 +57,49 @@ include(cmake/CompilerWarnings.cmake)
 #add_executable(held-carp held-carp.cpp timer.h)
 ###### uncomment ######
 
-add_executable(held-carp_parallel
-        additional/held-carp_parallel.cpp
-        include/timer.h
-        include/TreadSafeQ.h)
+# add_executable(held-carp_parallel
+#         additional/held-carp_parallel.cpp
+#         include/timer.h
+#         include/TreadSafeQ.h)
 
-add_executable(TSP_GA
-        include/timer.h
-        additional/TSP_GA.cpp
-        include/TreadSafeQ.h)
+# add_executable(TSP_GA
+#         include/timer.h
+#         additional/TSP_GA.cpp
+#         include/TreadSafeQ.h)
 
-add_executable(TSP_GA_parallel
-        include/timer.h
-        include/TreadSafeQ.h
-        include/TPool.h
-        src/TPool.cpp
-        additional/TSP_GA_parallel.cpp)
+# add_executable(TSP_GA_parallel
+#         include/timer.h
+#         include/TreadSafeQ.h
+#         include/TPool.h
+#         src/TPool.cpp
+#         additional/TSP_GA_parallel.cpp)
 
-add_executable(structured_ga
+# add_executable(structured_ga
+#         examples/main.cpp
+
+#         include/Population.h
+#         src/Population.cpp
+
+#         examples/SalesmanPopulation.cpp
+#         include/SalesmanPopulation.h
+
+#         include/Solver.h
+#         src/Solver.cpp
+
+#         include/timer.h
+#         include/TreadSafeQ.h
+#         include/TPool.h
+#         src/TPool.cpp
+# )
+
+add_executable(knapsack_ga
         examples/main.cpp
 
         include/Population.h
         src/Population.cpp
 
-        examples/SalesmanPopulation.cpp
-        include/SalesmanPopulation.h
+        examples/KnapsackPopulation.cpp
+        include/KnapsackPopulation.h
 
         include/Solver.h
         src/Solver.cpp
@@ -92,21 +110,19 @@ add_executable(structured_ga
         src/TPool.cpp
 )
 
-add_executable(knapsack_ga
-        examples/knapsack_ga.cpp
-)
-
 #! Put path to your project headers
 # target_include_directories(held-carp_parallel PRIVATE include)
 # target_include_directories(TSP_GA PRIVATE include)
 # target_include_directories(TSP_GA_parallel PRIVATE include)
-# target_include_directories(GA PRIVATE include)
 # target_include_directories(structured_ga PRIVATE include)
+target_include_directories(knapsack_ga PRIVATE include)
+
+# target_include_directories(GA PRIVATE include)
 
 ###### uncomment ######
 
-find_package(TBB REQUIRED)
-target_link_libraries(held-carp_parallel PRIVATE TBB::tbb)
+# find_package(TBB REQUIRED)
+# target_link_libraries(held-carp_parallel PRIVATE TBB::tbb)
 
 ###### uncomment ######
 
@@ -123,9 +139,9 @@ target_link_libraries(held-carp_parallel PRIVATE TBB::tbb)
 
 ###### uncomment ######
 
-INSTALL(PROGRAMS
-       $<TARGET_FILE:held-carp>	# ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
-       DESTINATION bin)
+#INSTALL(PROGRAMS
+#       $<TARGET_FILE:held-carp>	# ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
+#       DESTINATION bin)
 
 ###### uncomment ######
 
@@ -133,7 +149,7 @@ INSTALL(PROGRAMS
 
 ###### uncomment ######
 
-set(ALL_TARGETS GA)
+# set(ALL_TARGETS GA)
 
 ###### uncomment ######
 

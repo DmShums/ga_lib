@@ -4,6 +4,7 @@
 
 #include "Solver.h"
 #include "SalesmanPopulation.h"
+#include "KnapsackPopulation.h"
 #include "timer.h"
 
 std::vector<std::vector<int>> readCSVFile(const std::string& filename) {
@@ -32,40 +33,43 @@ std::vector<std::vector<int>> readCSVFile(const std::string& filename) {
 }
 
 int main(int argc, char* argv[]) {
-    auto threads = atoi(argv[1]);
-    auto filename = "./data/graph.csv";
-    auto distance_matrix = readCSVFile(filename);
+     auto threads = atoi(argv[1]);
+     auto filename = "./data/graph.csv";
+     auto distance_matrix = readCSVFile(filename);
 
-    SetUp setUp {
-        .generationsNum = 1000,
-        .crossoverRate = 0.5,
-        .mutationRate = 0.2
-    };
+     SetUp setUp {
+         .generationsNum = 1000,
+         .crossoverRate = 0.5,
+         .mutationRate = 0.2
+     };
 
-    Solver solver(setUp);
+     Solver solver(setUp);
 
-    SalesmanPopulation population(distance_matrix, 1000);
+     SalesmanPopulation population(distance_matrix, 1000);
 
-    //  if you want to change in-build type, use this constructions
-//    population.setSelection(Population::selections::simple);
-//    population.setCrossover(Population::crossovers::uniform);
+     //  if you want to change in-build type, use this constructions
+ //    population.setSelection(Population::selections::simple);
+ //    population.setCrossover(Population::crossovers::uniform);
 
-    auto start_time = get_current_time_fenced();
+     auto start_time = get_current_time_fenced();
 
-    Individual solution = solver.solve(population, threads);
+     Individual solution = solver.solve(population, threads);
 
-    auto finish_time = get_current_time_fenced();
-    auto time = finish_time - start_time;
+     auto finish_time = get_current_time_fenced();
+     auto time = finish_time - start_time;
 
-    std::cout << to_us(time) << std::endl;
+     std::cout << to_us(time) << std::endl;
 
-    std::cout
-        << "distance: " << solution.fitness << std::endl
-        << "path: " << std::endl;
+     std::cout
+         << "distance: " << solution.fitness << std::endl
+         << "path: " << std::endl;
 
-    for (auto a : solution.solution) {
-        std::cout << a << " -> ";
-    }
+     for (auto a : solution.solution) {
+         std::cout << a << " -> ";
+     }
 
-    std::cout << solution.solution.front() << std::endl;
+     std::cout << solution.solution.front() << std::endl;
+
+    return 0;
+
 }

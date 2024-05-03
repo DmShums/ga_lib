@@ -41,9 +41,8 @@ SalesmanPopulation::SalesmanPopulation(const std::vector<std::vector<int>>& dist
 }
 
 #if OVERRIDE
-    /*
-    * if you want to override, use this.
-    */
+    // if you want to override, use this.
+    
     Individual SalesmanPopulation::mutation(const Individual& parent) {
         Individual offspring(parent);
 
@@ -51,4 +50,5 @@ SalesmanPopulation::SalesmanPopulation(const std::vector<std::vector<int>>& dist
 
         return offspring;
     }
+
 #endif
