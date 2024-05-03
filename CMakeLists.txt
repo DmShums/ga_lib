@@ -92,16 +92,35 @@ add_executable(structured_ga
         src/TPool.cpp
 )
 
+add_executable(sizeThreadTest
+        examples/sizeThreadsComparison.cpp
+
+        include/Population.h
+        src/Population.cpp
+
+        include/SalesmanPopulation.h
+        examples/SalesmanPopulation.cpp
+
+        include/Solver.h
+        src/Solver.cpp
+
+        include/timer.h
+        include/TreadSafeQ.h
+        include/TPool.h
+        src/TPool.cpp
+)
+
 add_executable(knapsack_ga
         examples/knapsack_ga.cpp
 )
 
 #! Put path to your project headers
-# target_include_directories(held-carp_parallel PRIVATE include)
-# target_include_directories(TSP_GA PRIVATE include)
-# target_include_directories(TSP_GA_parallel PRIVATE include)
-# target_include_directories(GA PRIVATE include)
-# target_include_directories(structured_ga PRIVATE include)
+target_include_directories(held-carp_parallel PRIVATE include)
+target_include_directories(TSP_GA PRIVATE include)
+target_include_directories(TSP_GA_parallel PRIVATE include)
+#target_include_directories(GA PRIVATE include)
+target_include_directories(structured_ga PRIVATE include)
+target_include_directories(sizeThreadTest PRIVATE include)
 
 ###### uncomment ######
 
@@ -123,9 +142,9 @@ target_link_libraries(held-carp_parallel PRIVATE TBB::tbb)
 
 ###### uncomment ######
 
-INSTALL(PROGRAMS
-       $<TARGET_FILE:held-carp>	# ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
-       DESTINATION bin)
+#INSTALL(PROGRAMS
+#       $<TARGET_FILE:held-carp>	# ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
+#       DESTINATION bin)
 
 ###### uncomment ######
 
