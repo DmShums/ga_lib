@@ -1,9 +1,9 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <random> // For random number generation
 
 #include "Solver.h"
-#include "SalesmanPopulation.h"
 #include "KnapsackPopulation.h"
 #include "timer.h"
 
@@ -33,43 +33,42 @@ std::vector<std::vector<int>> readCSVFile(const std::string& filename) {
 }
 
 int main(int argc, char* argv[]) {
-     auto threads = atoi(argv[1]);
-     auto filename = "./data/graph.csv";
-     auto distance_matrix = readCSVFile(filename);
 
-     SetUp setUp {
-         .generationsNum = 1000,
-         .crossoverRate = 0.5,
-         .mutationRate = 0.2
-     };
+    auto threads = atoi(argv[1]);
 
-     Solver solver(setUp);
+    std::vector<int> weights = {10, 20, 30};
+    std::vector<int> values = {60, 100, 120};
+    int maxWeight = 50;
+    size_t populationSize = 100;
 
-     SalesmanPopulation population(distance_matrix, 1000);
+    KnapsackPopulation knapsackPopulation(weights, values, maxWeight, populationSize);
 
-     //  if you want to change in-build type, use this constructions
- //    population.setSelection(Population::selections::simple);
- //    population.setCrossover(Population::crossovers::uniform);
+    SetUp setUp {
+            .generationsNum = 1000,
+            .crossoverRate = 0.5,
+            .mutationRate = 0.2
+    };
 
-     auto start_time = get_current_time_fenced();
+    Solver solver(setUp);
 
-     Individual solution = solver.solve(population, threads);
+    auto start_time = get_current_time_fenced();
 
-     auto finish_time = get_current_time_fenced();
-     auto time = finish_time - start_time;
+    Individual solution = solver.solve(knapsackPopulation, threads);
 
-     std::cout << to_us(time) << std::endl;
+    auto finish_time = get_current_time_fenced();
+    auto time = finish_time - start_time;
 
-     std::cout
-         << "distance: " << solution.fitness << std::endl
-         << "path: " << std::endl;
+    std::cout << to_us(time) << std::endl;
 
-     for (auto a : solution.solution) {
-         std::cout << a << " -> ";
-     }
+    std::cout
+            << "Total value: " << solution.fitness << std::endl
+            << "Items: " << std::endl;
 
-     std::cout << solution.solution.front() << std::endl;
+    for (auto a : solution.solution) {
+        std::cout << a << " ";
+    }
+
+    std::cout << std::endl;
 
     return 0;
-
 }

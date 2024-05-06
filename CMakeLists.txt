@@ -94,13 +94,13 @@ add_executable(knapsack_ga
 )
 
 #! Put path to your project headers
-target_include_directories(held-carp_parallel PRIVATE include)
-target_include_directories(TSP_GA PRIVATE include)
-target_include_directories(TSP_GA_parallel PRIVATE include)
+#target_include_directories(held-carp_parallel PRIVATE include)
+#target_include_directories(TSP_GA PRIVATE include)
+#target_include_directories(TSP_GA_parallel PRIVATE include)
 #target_include_directories(GA PRIVATE include)
-target_include_directories(structured_ga PRIVATE include)
-target_include_directories(sizeThreadTest PRIVATE include)
-# target_include_directories(knapsack_ga PRIVATE include)
+#target_include_directories(structured_ga PRIVATE include)
+#target_include_directories(sizeThreadTest PRIVATE include)
+target_include_directories(knapsack_ga PRIVATE include)
 
 
 ###### uncomment ######

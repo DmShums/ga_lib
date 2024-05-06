@@ -1,10 +1,14 @@
 #include "KnapsackPopulation.h"
 
 std::vector<size_t> getRandomSolution(size_t len) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<size_t> dis(0, 1);
+
     std::vector<size_t> solution(len);
 
     for (size_t i = 0; i < len; ++i) {
-        solution[i] = std::rand() % 2;
+        solution[i] = dis(gen);
     }
 
     return solution;
@@ -32,10 +36,10 @@ void KnapsackPopulation::evaluate(Individual& ind) const {
     }
 }
 
-KnapsackPopulation::KnapsackPopulation(const std::vector<int>& values,
-                                       const std::vector<int>& weights,
+KnapsackPopulation::KnapsackPopulation(const std::vector<int>& weights,
+                                       const std::vector<int>& values,
                                        int maxWeight,
-                                       size_t populationSize) : values(values), weights(weights), maxWeight(maxWeight) {
+                                       size_t populationSize) : weights(weights), values(values), maxWeight(maxWeight) {
     for (size_t i = 0; i < populationSize; ++i) {
         Individual ind{};
         ind.solution = getRandomSolution(values.size());
@@ -43,18 +47,3 @@ KnapsackPopulation::KnapsackPopulation(const std::vector<int>& values,
         population.emplace_back(ind);
     }
 }
-
-// Individual KnapsackPopulation::mutation(const Individual& parent) {
-//     Individual offspring(parent);
-//     double mutationRate = 0.05;
-//     size_t solutionLen = parent.solution.size();
-
-//     for (size_t i = 0; i < solutionLen; ++i) {
-//         if ((std::rand() / (double)RAND_MAX) < mutationRate) {
-//             offspring.solution[i] = 1 - offspring.solution[i];
-//         }
-//     }
-
-//     evaluate(offspring);
-//     return offspring;
-// }
