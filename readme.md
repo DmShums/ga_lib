@@ -1,3 +1,6 @@
+# Genetic Algorithms Library
+
+### Description
 
 There are plenty of NP-complete algorithms, which
 require a lot of time to be solved. The genetic algorithms allow
@@ -150,3 +153,13 @@ int main(int argc, char** argv) {
     Individual solution = solver.solve(population);
 }
 ```
+
+### License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+### Authors
+- Dmytro Shumskyi
+- Marta Samoilenko
+- Victor-Mykola Muryn
+- Yurii Sahaidak
+- Roman Milischuk
