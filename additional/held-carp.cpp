@@ -155,8 +155,8 @@ std::pair<std::vector<int>, int> held_carp(const CITIES_MAP& cities_map) {
 }
 
 
-int main() {
-    auto filename = "../data/graph.csv";
+int main(int argc, char* argv[]) {
+    auto filename = argv[1];
     auto cities_map = readCSVFile(filename);
 
     auto start_time = get_current_time_fenced();
@@ -169,9 +169,9 @@ int main() {
     std::cout << to_us(time) << std::endl;
     std::cout << distance << std::endl;
 
-    for (auto i : path) {
-        std::cout << i << " ";
-    }
+//    for (auto i : path) {
+//        std::cout << i << " ";
+//    }
 
     return 0;
 }

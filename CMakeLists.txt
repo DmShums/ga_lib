@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.15)
 set(PROJECT_NAME ga_lib)
 project(${PROJECT_NAME} C CXX) # project(${PROJECT_NAME} C CXX ASM)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 ##########################################################
 # User configurable options of the template
@@ -57,20 +57,57 @@ include(cmake/CompilerWarnings.cmake)
 #add_executable(held-carp held-carp.cpp timer.h)
 ###### uncomment ######
 
-add_executable(held-carp_parallel held-carp_parallel.cpp timer.h TreadSafeQ.h)
+add_executable(sizeThreadTest
+        examples/sizeThreadsComparison.cpp
 
-###### uncomment ######
-add_executable(TSP_GA timer.h TSP_GA.cpp TreadSafeQ.h)
-add_executable(TSP_GA_parallel timer.h TreadSafeQ.h TPool.h TPool.cpp TSP_GA_parallel.cpp)
-add_executable(GA test_lib.cpp GeneticAlgorithm.cpp GeneticAlgorithm.hpp TPool.h TPool.cpp timer.h)
+        include/Population.h
+        src/Population.cpp
+
+        include/SalesmanPopulation.h
+        examples/SalesmanPopulation.cpp
+
+        include/Solver.h
+        src/Solver.cpp
+
+        include/timer.h
+        include/TreadSafeQ.h
+        include/TPool.h
+        src/TPool.cpp
+)
+
+add_executable(knapsack_ga
+        examples/main.cpp
+
+        include/Population.h
+        src/Population.cpp
+
+        examples/KnapsackPopulation.cpp
+        include/KnapsackPopulation.h
+
+        include/Solver.h
+        src/Solver.cpp
+
+        include/timer.h
+        include/TreadSafeQ.h
+        include/TPool.h
+        src/TPool.cpp
+)
 
 #! Put path to your project headers
-#target_include_directories(${PROJECT_NAME} PRIVATE options_parser)
+#target_include_directories(held-carp_parallel PRIVATE include)
+#target_include_directories(TSP_GA PRIVATE include)
+#target_include_directories(TSP_GA_parallel PRIVATE include)
+#target_include_directories(GA PRIVATE include)
+#target_include_directories(structured_ga PRIVATE include)
+#target_include_directories(sizeThreadTest PRIVATE include)
+target_include_directories(knapsack_ga PRIVATE include)
+target_include_directories(sizeThreadTest PRIVATE include)
+
 
 ###### uncomment ######
 
-find_package(TBB REQUIRED)
-target_link_libraries(held-carp_parallel PRIVATE TBB::tbb)
+# find_package(TBB REQUIRED)
+# target_link_libraries(held-carp_parallel PRIVATE TBB::tbb)
 
 ###### uncomment ######
 
@@ -88,8 +125,8 @@ target_link_libraries(held-carp_parallel PRIVATE TBB::tbb)
 ###### uncomment ######
 
 #INSTALL(PROGRAMS
-#        $<TARGET_FILE:held-carp>	# ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
-#        DESTINATION bin)
+#       $<TARGET_FILE:held-carp>	# ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
+#       DESTINATION bin)
 
 ###### uncomment ######
 
@@ -97,7 +134,7 @@ target_link_libraries(held-carp_parallel PRIVATE TBB::tbb)
 
 ###### uncomment ######
 
-set(ALL_TARGETS GA)
+# set(ALL_TARGETS GA)
 
 ###### uncomment ######
 

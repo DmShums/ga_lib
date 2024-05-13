@@ -1,7 +1,7 @@
 """ generate random matrix """
 import random
 
-number = 20
+number = 50
 
 def random_matrix(number):
     result = []
@@ -22,4 +22,5 @@ def random_matrix(number):
         file.write("\n".join(",".join(row) for row in result))
 
 
-random_matrix(number)
+if __name__ == "__main__":
+    random_matrix(number)

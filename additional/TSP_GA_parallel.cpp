@@ -7,6 +7,7 @@
 #include "timer.h"
 #include <cstdlib>
 #include <random>
+#include "TPool.h"
 
 
 int NUM_CITIES;
@@ -147,15 +148,28 @@ void mutate(Individual& individual) {
 }
 
 std::vector<Individual> geneticAlgorithm() {
+    thread_pool pool(std::thread::hardware_concurrency());
+
     std::vector<Individual> population = initializePopulation();
     for (int generation = 0; generation < NUM_GENERATIONS; ++generation) {
         std::vector<Individual> new_population;
+        std::vector<std::future<Individual>> fut_population;
+
         for (int i = 0; i < POPULATION_SIZE; ++i) {
-            Individual parent1 = tournamentSelection(population);
-            Individual parent2 = tournamentSelection(population);
-            Individual offspring = crossover(parent1, parent2);
-            mutate(offspring);
-            new_population.push_back(offspring);
+            std::function<Individual()> task = [&population]() {
+                Individual parent1 = tournamentSelection(population);
+                Individual parent2 = tournamentSelection(population);
+                Individual offspring = crossover(parent1, parent2);
+                mutate(offspring);
+                return offspring;
+            };
+
+            std::future<Individual> future = pool.submit(task);
+            fut_population.push_back(std::move(future));
+        }
+
+        for (auto &f : fut_population) {
+            new_population.push_back(f.get());
         }
         population = new_population;
     }
@@ -163,7 +177,7 @@ std::vector<Individual> geneticAlgorithm() {
 }
 
 int main() {
-    auto filename = "./data/graph.csv";
+    auto filename = "../data/graph.csv";
     distance_matrix = readCSVFile(filename);
     NUM_CITIES = distance_matrix.size();
 //    std::cout << NUM_CITIES << std::endl;
