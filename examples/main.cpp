@@ -33,8 +33,7 @@ std::vector<std::vector<int>> readCSVFile(const std::string& filename) {
 }
 
 int main(int argc, char* argv[]) {
-
-    auto threads = atoi(argv[1]);
+    size_t threads = std::stol(argv[1]);
 
     std::vector<int> weights = {10, 20, 30};
     std::vector<int> values = {60, 100, 120};
@@ -44,9 +43,9 @@ int main(int argc, char* argv[]) {
     KnapsackPopulation knapsackPopulation(weights, values, maxWeight, populationSize);
 
     SetUp setUp {
-            .generationsNum = 1000,
-            .crossoverRate = 0.5,
-            .mutationRate = 0.2
+        .generationsNum = 1000,
+        .crossoverRate = 0.5,
+        .mutationRate = 0.2
     };
 
     Solver solver(setUp);
@@ -61,8 +60,8 @@ int main(int argc, char* argv[]) {
     std::cout << to_us(time) << std::endl;
 
     std::cout
-            << "Total value: " << solution.fitness << std::endl
-            << "Items: " << std::endl;
+        << "Total value: " << solution.fitness << std::endl
+        << "Items: " << std::endl;
 
     for (auto a : solution.solution) {
         std::cout << a << " ";

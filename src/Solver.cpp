@@ -128,7 +128,6 @@ Individual Solver::solve(Population &population, size_t threads) {
         }
         std::cout << std::endl;
 #endif
-
     }
 
     return population.getBest();

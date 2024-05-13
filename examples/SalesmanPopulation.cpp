@@ -1,4 +1,5 @@
 #include "SalesmanPopulation.h"
+
 #define OVERRIDE false
 
 std::vector<size_t> getRandomPermutation(size_t len) {

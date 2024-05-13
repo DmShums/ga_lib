@@ -101,6 +101,7 @@ add_executable(knapsack_ga
 #target_include_directories(structured_ga PRIVATE include)
 #target_include_directories(sizeThreadTest PRIVATE include)
 target_include_directories(knapsack_ga PRIVATE include)
+target_include_directories(sizeThreadTest PRIVATE include)
 
 
 ###### uncomment ######

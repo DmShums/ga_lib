@@ -53,3 +53,100 @@ Abstract individual class. This class contains:
 #### Population
 The population is a main class to solve a problem. Here you should define main properties of Population.
 
+- `std::vector<Individual> population` — the vector of individuals.
+- `void evaluate(Individual&) const` — evaluate the individual. You should implement this method in your class.
+- `bool isFirstBetterThanSecond(Individual& first, Individual& second)` — the function that tells how to compare two individuals. By default, it compares their fitnesses.
+
+- `void setSelection(selection_t selection)` — set the selection algorithm.
+- `void setMutation(mutation_t mutation)` — set the mutation algorithm.
+- `void setCrossover(crossover_t crossover)` — set the crossover algorithm.
+
+### Example
+
+Here is an example of how to use the library to solve the Travelling Salesman Problem.
+
+SalesmanPopulation.h
+```cpp
+#include <ga_lib/population.h>
+
+class SalesmanPopulation : public Population {
+private:
+    std::vector<std::vector<int>> distMatrix;
+public:
+    SalesmanPopulation() = delete;
+    SalesmanPopulation(const std::vector<std::vector<int>>& distMatrix,
+                       size_t populationSize);
+
+    void evaluate(Individual& ind) const override;
+    bool isFirstBetterThanSecond(const Individual& ind1, const Individual& ind2) const override;
+};
+```
+
+SalesmanPopulation.cpp
+```cpp
+#include "SalesmanPopulation.h"
+
+std::vector<size_t> getRandomPermutation(size_t len) {
+    std::vector<size_t> permutation(len);
+
+    for (size_t i = 0; i < len; ++i) {
+        permutation[i] = i;
+    }
+
+    std::shuffle(permutation.begin(), permutation.end(), std::mt19937(std::random_device()()));
+    return permutation;
+}
+
+bool SalesmanPopulation::isFirstBetterThanSecond(const Individual& ind1, const Individual& ind2) const {
+    return ind1 < ind2;
+}
+
+void SalesmanPopulation::evaluate(Individual& ind) const {
+    int fitness = 0;
+    size_t prev = ind.solution.front();
+
+    for (size_t i = 1; i < ind.solution.size(); ++i) {
+        size_t next = ind.solution[i];
+        fitness += distMatrix[prev][next];
+        prev = next;
+    }
+
+    fitness += distMatrix[ind.solution.back()][ind.solution.front()];
+    ind.fitness = fitness;
+}
+
+SalesmanPopulation::SalesmanPopulation(const std::vector<std::vector<int>>& distMatrix,
+                                       size_t populationSize) : distMatrix(distMatrix) {
+    for (size_t i = 0; i < populationSize; ++i) {
+        Individual ind{};
+        ind.solution = getRandomPermutation(distMatrix.size());
+        evaluate(ind);
+        population.emplace_back(ind);
+    }
+}
+```
+    
+main.cpp
+```cpp
+#include <iostream>
+#include <ga_lib/solver.h>
+#include "SalesmanPopulation.h"
+    
+int main(int argc, char** argv) {
+    auto path = argv[1];
+    auto distance_matrix = readCSVFile(path);
+
+    SalesmanPopulation population(distance_matrix, 1000);
+    population.setMutation(Population::mutations::rotation);
+    
+    SetUp setUp = {
+        .generationsNum = 1000,
+        .crossoverRate = 0.5,
+        .mutationRate = 0.4
+    };
+
+    Solver solver(setUp);
+
+    Individual solution = solver.solve(population);
+}
+```
