@@ -7,7 +7,7 @@ require a lot of time to be solved. The genetic algorithms allow
 us to reach great results with significantly lower complexity. The
 project’s main topic is the development of different techniques
 for genetic algorithms and comparing them with each other. 
-The details are in a [paper](https://www.overleaf.com/project/65e82e6d956e437be5db1335).
+The details are in a [paper](https://www.overleaf.com/read/scdmmjntdcbd#daa60d).
 
 ### Installation
 The easiest way to include our library is to clone this repository as a submodule to your project
